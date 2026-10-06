@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 2 · 스킬 다루기 | Claude Cowork 핵심 익히기</title>
+<style>
+  :root{
+    --paper:#FBF9F4; --paper-2:#F3EFE6;
+    --ink:#1B2430; --ink-soft:#48525F; --ink-faint:#8A9099;
+    --line:#E2DBCD; --hl:#FFE45C;
+    --acc:#2E9E6B;           /* 워크샵 = green (실습/직접 하기) */
+    --acc-bg:#E0F0E7;
+    --blue:#3B6EA5; --blue-bg:#E6EEF6; --blue-line:#C4D6E8; --blue-dk:#2C5580;
+    --warn:#C9852B; --warn-bg:#FBEFD8; --gap:#D6503C; --gap-bg:#F8E3DE;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Space Grotesk',-apple-system,sans-serif;
+    --kr:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--kr);font-size:17px;line-height:1.78;-webkit-font-smoothing:antialiased;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 2.1em;background-position:0 -1px;background-attachment:local}
+  .sheet{max-width:var(--maxw);margin:0 auto;padding:0 26px 36px;position:relative}
+  a{color:var(--acc);text-decoration:none;border-bottom:1px solid rgba(46,158,107,.4)}
+  a:hover{border-bottom-color:var(--acc)}
+
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:76px 26px 30px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--acc)}
+  .kicker .series{color:var(--ink-soft)}
+  .kicker .wbadge{font-family:var(--mono);font-size:10.5px;font-weight:700;background:var(--acc);color:#fff;border-radius:20px;padding:2px 9px;letter-spacing:.08em}
+  h1.title{font-family:var(--disp);font-weight:700;font-size:clamp(31px,5.6vw,50px);line-height:1.09;letter-spacing:-.015em;margin:0 0 18px}
+  h1.title .em{position:relative;white-space:nowrap}
+  h1.title .em::after{content:"";position:absolute;left:-3px;right:-3px;bottom:.08em;height:.42em;background:var(--hl);z-index:-1;transform:rotate(-.6deg);border-radius:2px}
+  .subtitle{font-family:var(--kr);font-size:clamp(18px,2.6vw,22px);color:var(--ink-soft);font-weight:500;margin:0 0 30px}
+  .meta{font-family:var(--mono);font-size:13.5px;color:var(--ink-faint);line-height:1.7;padding-top:20px;border-top:1px solid var(--line)}
+  .meta b{color:var(--ink-soft);font-weight:500}
+
+  .thesis{max-width:var(--maxw);margin:34px auto 0;padding:0 26px}
+  .thesis-inner{background:var(--ink);color:#F6F3EC;border-radius:14px;padding:32px 34px 28px;position:relative;overflow:hidden}
+  .thesis-lead{font-size:14px;color:#B9BFC8;font-family:var(--mono);letter-spacing:.04em;margin-bottom:10px}
+  .thesis-main{font-family:var(--disp);font-weight:600;font-size:clamp(19px,3.2vw,25px);line-height:1.32;margin:0}
+  .thesis-main .y{color:var(--hl)}
+  .builds{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .bld{flex:1;min-width:220px;background:#2A3340;border-radius:10px;padding:13px 15px}
+  .bld .bn{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;font-weight:700}
+  .bld.b1 .bn{color:#9CC3E8} .bld.b2 .bn{color:#8FE0BA}
+  .bld .btt{font-family:var(--disp);font-weight:700;font-size:15px;color:#F6F3EC;margin:3px 0 4px}
+  .bld .bd{font-size:12.5px;color:#B9BFC8;line-height:1.5}
+  /* 여백 정리 — 카드 사이가 82px까지 벌어져 있었다 */
+  section{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  main.sheet > section:first-child{padding-top:22px}
+  main.sheet > section > .sec-head{margin-top:30px}
+  .step{margin:16px 0}
+  .sec-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+  .sec-num{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--paper);background:var(--ink);min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px}
+  h2{font-family:var(--disp);font-weight:700;font-size:clamp(24px,4vw,32px);line-height:1.2;letter-spacing:-.01em;margin:0}
+  .sec-sub{color:var(--ink-soft);font-size:15px;margin-top:4px;font-family:var(--mono);letter-spacing:.02em}
+  p{margin:14px 0}
+  .lead{font-size:19px;color:var(--ink)}
+  strong{font-weight:700}
+  .mk{background:linear-gradient(transparent 58%,var(--hl) 58% 92%,transparent 92%);padding:0 2px;font-weight:600}
+  code{font-family:var(--mono);font-size:.85em;background:var(--paper-2);padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+
+
+  /* STEP block */
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;margin:18px 0;overflow:hidden}
+  .step-head{display:flex;gap:14px;align-items:center;padding:15px 20px;background:var(--acc-bg);border-bottom:1px solid #B6DEC8}
+  .step-head .sn{font-family:var(--mono);font-weight:700;font-size:12px;color:#fff;background:var(--acc);min-width:56px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.03em}
+  .step-head .st{font-family:var(--disp);font-weight:700;font-size:17px;color:var(--ink)}
+  .step-head .stag{font-family:var(--mono);font-size:11.5px;color:var(--acc);margin-top:2px;display:block}
+  .step-body{padding:16px 20px 20px}
+  .step-goal{background:var(--acc-bg);border-radius:8px;padding:8px 13px;margin:0 0 14px;font-size:14.5px;color:var(--ink-soft);display:flex;gap:8px;align-items:baseline;line-height:1.5}
+  .step-goal b{color:#1f7a50;font-family:var(--disp);white-space:nowrap}
+  .step-body ol{margin:0;padding-left:22px}
+  .step-body ol li{margin:8px 0;font-size:15.5px}
+  .step-body ul{margin:8px 0;padding-left:20px;font-size:14.5px;color:var(--ink-soft)}
+
+  /* 표 — 레퍼런스 모듈(W2-3)과 동일 스타일. 워크샵 템플릿엔 원래 표가 없었다 */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+  th{background:var(--paper-2);font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+
+
+  /* 팁 줄 — 레퍼런스 모듈과 동일 */
+  .tipline{display:flex;gap:9px;align-items:baseline;margin:9px 0;font-size:15.5px;
+    color:var(--ink-soft);line-height:1.55;padding-left:2px}
+  .tipline .ti{flex-shrink:0;font-size:14px;line-height:1.6}
+  .tipline b,.tipline strong{color:var(--ink)}
+  .tipline b,.tipline strong{color:var(--ink)}
+
+  /* 파트 구분 — 3·4번 모듈과 동일한 미니멀 구분자 */
+  .part{max-width:var(--maxw);margin:38px auto 0;padding:0 26px}
+  .part-inner{display:flex;gap:13px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:9px}
+  .part-n{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--ink);border-radius:7px;padding:4px 11px;flex-shrink:0}
+  .part-t{font-family:var(--disp);font-weight:700;font-size:clamp(18px,3vw,22px);line-height:1.2}
+  .part-d{font-size:15px;color:var(--ink-soft);margin-top:7px;padding:0 26px;max-width:var(--maxw);margin-left:auto;margin-right:auto;line-height:1.55}
+
+  .path{font-family:var(--mono);font-size:13px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;white-space:nowrap}
+
+  /* blue variant for PART 1 */
+  .p1sec .step-head{background:var(--blue-bg);border-bottom-color:var(--blue-line)}
+  .p1sec .step-head .sn{background:var(--blue)}
+  .p1sec .step-head .stag{color:var(--blue)}
+  .p1sec .step-goal{background:var(--blue-bg)} .p1sec .step-goal b{color:var(--blue-dk)}
+  .p1sec .rnote{background:var(--blue-bg);border-color:var(--blue-line)}
+  .p1sec .rnote b{color:var(--blue-dk)}
+  .p1sec a{color:var(--blue);border-bottom-color:rgba(59,110,165,.4)}
+  .p1sec .sec-num{background:var(--blue)}
+
+  /* prompt to copy */
+  .prompt{background:var(--ink);color:#E7E3D9;border-radius:10px;padding:14px 16px;margin:12px 0;font-size:14.5px;line-height:1.6;position:relative;border-left:4px solid var(--hl)}
+  .prompt .pl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--hl);display:block;margin-bottom:6px}
+  .prompt .ptext{font-family:var(--kr)}
+
+  /* result note */
+  .rnote{background:var(--acc-bg);border:1px solid #B6DEC8;border-radius:9px;padding:11px 14px;margin:12px 0 0;font-size:14px;color:var(--ink-soft)}
+  .rnote b{color:#1f7a50}
+
+  .call{border-radius:12px;padding:18px 20px;margin:20px 0;font-size:15px;line-height:1.7;border:1px solid var(--line);background:#fff}
+  .call .ct{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+  .call.tip{background:#FFFDF4;border-color:#F0E4B8} .call.tip .ct{color:#B08900}
+  .call.warn{background:var(--gap-bg);border-color:#EAC3B9} .call.warn .ct{color:var(--gap)}
+  .call.blue{background:var(--blue-bg);border-color:var(--blue-line)} .call.blue .ct{color:var(--blue)}
+  .call p:first-of-type{margin-top:0} .call p:last-child{margin-bottom:0}
+
+  /* concept: 알려주는 → 해주는 */
+  .flip{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+  .flip .card{border-radius:12px;padding:16px 18px;border:1px solid var(--line)}
+  .flip .card.a{background:var(--paper-2)} .flip .card.b{background:var(--blue-bg);border-color:var(--blue-line)}
+  .flip .card .cl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .flip .card.b .cl{color:var(--blue)}
+  .flip .card .cm{font-family:var(--disp);font-weight:700;font-size:16px;margin:4px 0 4px}
+  .flip .card .cd{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .flip .arrow{display:flex;align-items:center;font-size:22px;color:var(--blue)}
+  @media (max-width:600px){.flip{grid-template-columns:1fr}.flip .arrow{justify-content:center;transform:rotate(90deg)}}
+
+  /* prep checklist */
+  .prep{display:flex;flex-direction:column;gap:8px;margin:20px 0}
+  .pchk{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 16px}
+  .pchk .box{width:20px;height:20px;border:2px solid var(--acc);border-radius:5px;flex-shrink:0}
+  .p1sec .pchk .box{border-color:var(--blue)}
+  .pchk .pt{font-weight:600;font-size:15px}
+  .pchk .pd{font-size:13px;color:var(--ink-soft)}
+
+  /* tools row */
+  .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+  .tool{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .tool .te{font-size:19px} .tool .tt{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px} .tool .td{font-size:13px;color:var(--ink-soft)}
+
+  /* 공개 디자인 시스템 카드 — 이름·설명 위, 실제 화면 캡처 아래 */
+  .dsys{background:#fff;border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+  .dsys .dh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:15px 18px 0}
+  .dsys .dn{font-family:var(--disp);font-weight:700;font-size:16px}
+  .dsys .dtag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:#1f7a50;background:var(--acc-bg);border-radius:20px;padding:2px 9px}
+  .dsys .dd{font-size:14.5px;color:var(--ink-soft);line-height:1.6;padding:6px 18px 13px;margin:0}
+  .dsys img{width:100%;display:block;border-top:1px solid var(--line)}
+  .dsys .dcap{font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding:8px 18px 12px}
+
+  /* 4-stage pattern */
+  .pattern{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:22px 0}
+  .pstage{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 12px;text-align:center;position:relative}
+  .pstage .pe{font-size:22px} .pstage .pn{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px}
+  .pstage .pdd{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .pstage:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:15px;z-index:1}
+  @media (max-width:600px){.pattern{grid-template-columns:1fr 1fr}.pstage:not(:last-child)::after{display:none}}
+
+  .pull{border-left:4px solid var(--acc);padding:8px 0 8px 22px;margin:26px 0;font-size:18px;font-style:italic;color:var(--ink);font-family:var(--kr);line-height:1.5}
+  .pull.blue{border-left-color:var(--blue)}
+  .pull .src{display:block;font-style:normal;font-size:13px;color:var(--ink-faint);font-family:var(--mono);margin-top:8px}
+
+  .cheat{background:var(--ink);color:#EDEAE2;border-radius:16px;padding:30px;margin:30px 0}
+  .cheat h2{color:#fff;font-family:var(--disp)}
+  .cheat .csq{font-family:var(--disp);font-size:16px;color:var(--hl);margin:0 0 18px;line-height:1.45}
+  .cheat .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .cheat .cpart .cph{font-family:var(--mono);font-size:11px;letter-spacing:.1em;font-weight:700;margin-bottom:8px}
+  .cheat .cpart.c1 .cph{color:#9CC3E8} .cheat .cpart.c2 .cph{color:#8FE0BA}
+  .cheat ol{padding-left:20px;margin:0} .cheat ol li{margin:6px 0;color:#C4C9D0;font-size:14px} .cheat ol li b{color:#fff}
+  /* 어두운 배경에서 code 의 밝은 배경이 형광펜처럼 보여 글자가 묻힌다 — 배경·테두리를 없앤다 */
+  /* 한 장 요약의 라벨·값 2열 정렬 (다른 모듈과 동일 규칙) */
+  .cheat .row{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:15px;color:#C4C9D0;flex-wrap:wrap;line-height:1.5}
+  .cheat .row:last-child{border:none}
+  .cheat .row b{color:#fff;font-family:var(--disp)}
+  .cheat .k{min-width:150px;font-family:var(--mono);color:var(--hl);font-size:13.5px;flex-shrink:0}
+  .cheat code{background:transparent;border:none;color:#FFE9A8;padding:0;font-size:.92em}
+  @media (max-width:600px){.cheat .cgrid{grid-template-columns:1fr;gap:18px} .cheat .k{min-width:auto}}
+  .todo{background:var(--hl);color:var(--ink);border-radius:12px;padding:18px 22px;margin-top:22px;font-weight:600;font-size:16px}
+  .todo .tt{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block}
+
+  .sources{margin-top:40px;padding-top:24px;border-top:2px solid var(--ink);font-size:14px;color:var(--ink-soft)}
+  .sources h3{font-size:15px;margin:0 0 12px;color:var(--ink)}
+  .sources ul{padding-left:18px;line-height:1.7}
+  footer.foot{max-width:var(--maxw);margin:0 auto;padding:28px 26px;text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:12px}
+  .nav-next{display:inline-flex;gap:10px;align-items:center;margin-top:8px;color:var(--ink-soft)}
+
+  @media (max-width:680px){body{font-size:16px} .tools{grid-template-columns:1fr} .step-head{flex-wrap:wrap}}
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.in{opacity:1;transform:none}
+  }
+
+figure.fig{margin:14px 0} figure.fig img{width:100%;display:block;border:1px solid var(--line);border-radius:12px} figure.fig figcaption{font-size:13px;color:var(--ink-soft);margin-top:6px;text-align:center}
+.tools.c4{grid-template-columns:repeat(4,1fr)} @media (max-width:680px){.tools.c4{grid-template-columns:1fr 1fr}}
+.who{font-size:12px;color:var(--ink-faint);white-space:nowrap}
+</style>
+<link rel="stylesheet" href="assets/theme/minimal.css">
+<style id="w33-extra">
+  .subtitle.cowork-subtitle{max-width:none}
+  .cowork-subtitle-tail{display:inline-block;max-width:100%}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .sec-num{font-size:13px!important;letter-spacing:-.02em}
+  h2 .badge{font-size:12px;vertical-align:middle;margin-left:8px;font-weight:400}
+  .call .cb>*:first-child{margin-top:0}.call .cb>*:last-child{margin-bottom:0}.call .cb p{margin:0 0 8px}.call .cb table{margin:10px 0 0}
+  .shot{margin:16px 0}.shot img{display:block;max-width:100%;border:1px solid var(--hair);border-radius:12px}.shot figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+  details{border:1px solid var(--hair);border-radius:8px;padding:0 16px;margin:14px 0;background:var(--canvas)}
+  details>summary{cursor:pointer;padding:12px 0;font-weight:500;color:var(--ink);list-style:none;display:flex;align-items:center;gap:8px;font-size:14.5px}
+  details>summary::-webkit-details-marker{display:none}
+  details>summary::before{content:"▸";color:var(--mute-2);font-size:12px;transition:transform .15s}
+  details[open]>summary::before{transform:rotate(90deg)}
+  details[open]>summary{border-bottom:1px solid var(--hair-cool);margin-bottom:12px}
+  details>*:last-child{margin-bottom:14px}
+  .filebox{border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:14px 0}
+  .filebox .fh{padding:10px 14px;font-size:13px;color:var(--mute);background:var(--canvas-soft);border-bottom:1px solid var(--hair-cool)}
+  .filebox .fn{font-family:var(--mono);font-size:12.5px}
+  .filebox pre{margin:0!important;border:0!important;border-radius:0!important;max-height:420px;overflow:auto;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .mutes{color:var(--mute-2);font-size:12.5px;margin-left:10px}
+  .dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .step-body>p:first-of-type{margin-top:0}
+  .src{font-size:13px;color:var(--mute)}
+  .prompt pre.ptext{white-space:pre-wrap;word-break:break-word}
+  table td code,table th code{font-size:12.5px}
+</style>
+<link rel="stylesheet" href="assets/theme/meet3-content.css">
+<meta name="description" content="AIX102 Claude Cowork 핵심 익히기 실습 가이드">
+<link rel="stylesheet" href="assets/site/site.css">
+</head>
+<body class="meeting3-content" data-page="module2">
+<svg style="display:none" aria-hidden="true"><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2.5 20h19L12 3z"/><path d="M12 9v5"/><path d="M12 17.3v.01"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></symbol><symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/><path d="M3 21h18"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5"/><path d="M12 16V8"/><path d="M17 16v-8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="15.5" cy="8.5" r="4.5"/><path d="M12.3 11.7L3 21v-4h4l1-1v-2h2v-2h2"/></symbol><symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="10" rx="1.5"/><path d="M2 19h20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v3"/></symbol><symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol><symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 3c3 2 5 6 5 10l-2 3H9l-2-3c0-4 2-8 5-10z"/><path d="M9 16l-2 4"/><path d="M15 16l2 4"/><path d="M12 10h.01"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 3.5a4 4 0 0 1 0 7.5"/><path d="M22 21a7 7 0 0 0-5-6.7"/></symbol></svg>
+<header class="hero">
+  <div class="kicker"><span class="series">Claude Cowork 핵심 익히기</span> · 모듈 2 · <span class="wbadge">워크샵</span></div>
+  <h1 class="title"><span class="em">스킬</span> 다루기</h1>
+  <p class="subtitle cowork-subtitle">공개 스킬을 받아 쓰고, 팀 공유문 스킬과 브랜드 스킬을 직접 만듭니다. 보너스로 카드뉴스 스킬도 만들어 봅니다.</p>
+</header>
+<main class="sheet">
+<div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg> 새 프로젝트에서 시작</div><div class="cb"><p>모듈 2는 <b>새 프로젝트</b>에서 진행합니다. 사이드바의 <b>프로젝트 → 새 프로젝트</b>에서 이름을 <code>스킬 실습</code>으로 정하고, <b>폴더 사용</b>으로 <code>sample_data</code>가 들어 있는 실습 폴더를 연결합니다. 앞에서 만든 데일리세이브 프로젝트의 지침이 결과에 섞이지 않게 하기 위해서입니다.</p></div></div>
+
+<section class="s ch" id="ch-2-1" data-sublink="2.1 · 스킬이란 무엇인가"><div class="sec-head"><div class="sec-num">2.1</div><div><h2>스킬이란 무엇인가</h2><div class="sec-sub">스킬은 반복해서 사용할 업무 절차와 작성 규칙을 저장한 지침서입니다.</div></div></div>
+<p><code>SKILL.md</code> 파일에 아래 내용을 적습니다. 필요한 양식·용어집·로고도 함께 묶을 수 있습니다.</p><table>
+    <tr><th>구성</th><th>역할</th></tr>
+    <tr><td>이름 · name</td><td>목록에서 스킬을 찾고 요청할 때 쓰는 이름</td></tr>
+    <tr><td>설명 · description</td><td>어떤 작업에서 이 스킬을 사용할지 안내</td></tr>
+    <tr><td>본문</td><td>작업 순서·결과 형식·지켜야 할 규칙</td></tr>
+  </table><p>등록한 스킬은 대화에서 이름을 지정해 사용할 수 있습니다. 공개된 스킬을 받아 쓰거나, 필요한 규칙으로 고쳐 나만의 스킬을 만들 수 있습니다.</p>
+</section>
+
+<section class="s ch" id="ch-2-2" data-sublink="2.2 · 공개 스킬 추가해서 쓰기"><div class="sec-head"><div class="sec-num">2.2</div><div><h2>공개 스킬 추가해서 쓰기</h2><div class="sec-sub">공개 스킬 eli5를 프롬프트로 저장해 바로 써 보고, 다음 실습에 쓸 internal-comms를 사용자 지정에서 추가합니다.</div></div></div>
+<ul class="skill-brief">
+  <li><b>eli5</b>: “Explain Like I’m 5”의 줄임말입니다. 처음 접하는 주제를 큰 그림과 짧은 설명으로 풀어 주는 HTML 아티팩트를 만듭니다. <a href="https://github.com/anthropics/claude-plugins-community/blob/main/eli5/skills/eli5/SKILL.md" target="_blank" rel="noopener">스킬 원문</a></li>
+  <li><b>internal-comms</b>: 주간 보고·사내 공지·FAQ 등 내부 공유 글을 형식과 말투에 맞춰 작성하는 스킬입니다. 글의 종류에 따라 참고 지침을 골라 씁니다. <a href="https://github.com/anthropics/skills/tree/main/skills/internal-comms" target="_blank" rel="noopener">공식 예제</a></li>
+</ul><div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">eli5 스킬 저장</span></span></div><div class="step-body"><p>새 대화에서 아래 프롬프트를 보냅니다. Claude가 공개 페이지의 <code>SKILL.md</code>를 읽고 내 스킬로 저장합니다.</p><div class="prompt"><span class="pl">1 · 공개 스킬을 내 스킬로 저장</span><pre class="ptext">다음 Skill을 내 스킬에 저장해줘.
+https://github.com/anthropics/claude-plugins-community/blob/main/eli5/skills/eli5/SKILL.md</pre></div><p>저장하기 전에 Claude가 보여 주는 스킬 이름(<b>eli5</b>)과 하는 일을 확인합니다. 파일 삭제·외부 전송 지시가 있는 스킬은 저장하지 않습니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">저장 확인</span></span></div><div class="step-body"><p><b>사용자 지정 → 스킬 → 내 항목</b>에서 <code>eli5</code>가 보이는지 확인합니다. 입력창의 <b>+ → 스킬</b> 목록에도 나타납니다.</p><details id="skill-upload"><summary>참고 · 스킬 파일(ZIP·SKILL.md)을 직접 올리는 방법</summary><p>Claude가 만든 스킬 ZIP이나 내려받은 <code>SKILL.md</code>는 직접 올려 등록할 수도 있습니다.</p><ol>
+    <li><b>사용자 지정 → 스킬</b>에서 <b>추가 → 스킬 업로드</b>를 선택합니다.</li>
+    <li><code>SKILL.md</code> 또는 스킬 폴더를 묶은 ZIP을 올립니다.</li>
+    <li>이름·설명을 확인하고 <b>저장</b>을 누릅니다.</li>
+  </ol><figure class="shot shot-compact"><img src="assets/img/cw_11.jpg" alt="스킬 목록에서 스킬 추가를 선택합니다." loading="lazy"><figcaption>스킬 목록에서 스킬 추가를 선택합니다.</figcaption></figure><figure class="shot shot-compact"><img src="assets/img/cw_12.png" alt="새 스킬 창에서 스킬 업로드를 선택합니다." loading="lazy"><figcaption>새 스킬 창에서 스킬 업로드를 선택합니다.</figcaption></figure><figure class="shot"><img src="assets/img/cw_13.png" alt="SKILL.md 파일이나 ZIP을 끌어다 놓거나 클릭해 업로드합니다." loading="lazy"><figcaption>SKILL.md 파일이나 ZIP을 끌어다 놓거나 클릭해 업로드합니다.</figcaption></figure></details></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">/eli5로 사용</span></span></div><div class="step-body"><p>입력창에 <code>/eli5</code>를 입력하고, 이어서 설명할 내용을 적습니다.</p><div class="prompt"><span class="pl">2 · /eli5로 공지 설명하기</span><pre class="ptext">/eli5 아래 공지를 처음 읽는 팀원에게 설명해줘.
+조건과 기한은 원문 그대로 유지해줘.
+
+[가상 공지]
+차기 정산 주기부터 가맹 파트너 대상 정산 마감 기준일이 익월 영업일 3일에서 2일로 단축 적용되며,
+기준일까지 미승인된 건은 차차월 정산으로 이연 처리됩니다. 이연 건은 별도 고지 없이 처리됩니다.</pre></div><p><b>확인:</b> 큰 그림과 짧은 설명으로 정리한 화면이 만들어지고, <b>마감 3→2영업일</b>, <b>미승인 건의 차차월 이연</b>, <b>별도 고지 없음</b>이 모두 남아 있는지 봅니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 4</span><span><span class="st">internal-comms 추가</span></span></div><div class="step-body"><p>이번에는 사용자 지정의 스킬 목록에서 검색해 설치합니다.</p><ol>
+    <li>사이드바에서 <b>사용자 지정</b>을 엽니다.</li>
+    <li><b>스킬</b> 탭에서 <b>탐색</b>을 선택하고, 오른쪽 위 <b>검색</b> 아이콘을 눌러 <code>internal-comms</code>를 입력합니다.</li>
+    <li>검색 결과의 <b>internal-comms</b> 카드에서 <b>+</b>를 눌러 추가합니다.</li>
+    <li><b>내 항목</b>에 <code>internal-comms</code>가 보이는지 확인합니다.</li>
+  </ol><figure class="shot"><img src="assets/img/cw_customize.png" alt="사용자 지정의 스킬 탭에서 탐색을 선택한 화면. 오른쪽 위에 검색 아이콘이 있습니다." loading="lazy"><figcaption>사용자 지정 → 스킬 → 탐색: 오른쪽 위 검색 아이콘으로 internal-comms를 찾아 +로 추가합니다.</figcaption></figure><p><b>확인:</b> 목록에 <code>internal-comms</code>가 표시됩니다. <a href="#ch-2-3">2.3</a>에서 이 스킬을 사용하고 팀 공유문 규격으로 고칩니다.</p><details><summary>internal-comms 스킬의 SKILL.md 파일 전문 보기</summary><p>모든 스킬에는 <code>SKILL.md</code> 파일이 필요합니다. 이 파일은 두 부분으로 구성됩니다: Claude에게 스킬을 언제 사용할지 알려주는 <code>---</code> 마커 사이의 <b>YAML frontmatter</b>와, 스킬이 실행될 때 Claude가 따르는 지침이 포함된 <b>markdown 콘텐츠</b>입니다. 디렉토리 이름(또는 frontmatter <code>name</code>을 설정한 경우 해당 값)이 입력하는 명령이 되고, <code>description</code>은 Claude가 스킬을 자동으로 로드할지 결정하는 데 도움이 됩니다.</p><table><tr><th>부분</th><th>아래 파일에서</th><th>역할</th></tr><tr><td>YAML frontmatter</td><td>맨 위 <code>---</code> 사이의 <code>name</code> · <code>description</code> · <code>license</code></td><td>언제, 어떤 이름으로 불러올지</td></tr><tr><td>markdown 콘텐츠</td><td><code>## When to use this skill</code>부터 끝까지</td><td>불러온 뒤 따를 순서와 규칙</td></tr></table><div class="filebox"><div class="fh"><span class="fn">internal-comms/SKILL.md</span></div><pre>---
+name: internal-comms
+description: A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).
+license: Complete terms in LICENSE.txt
+---
+
+## When to use this skill
+To write internal communications, use this skill for:
+- 3P updates (Progress, Plans, Problems)
+- Company newsletters
+- FAQ responses
+- Status reports
+- Leadership updates
+- Project updates
+- Incident reports
+
+## How to use this skill
+
+To write any internal communication:
+
+1. **Identify the communication type** from the request
+2. **Load the appropriate guideline file** from the `examples/` directory:
+    - `examples/3p-updates.md` - For Progress/Plans/Problems team updates
+    - `examples/company-newsletter.md` - For company-wide newsletters
+    - `examples/faq-answers.md` - For answering frequently asked questions
+    - `examples/general-comms.md` - For anything else that doesn't explicitly match one of the above
+3. **Follow the specific instructions** in that file for formatting, tone, and content gathering
+
+If the communication type doesn't match any existing guideline, ask for clarification or more context about the desired format.
+
+## Keywords
+3P updates, company newsletter, company comms, weekly update, faqs, common questions, updates, internal comms</pre></div><p>본문의 <code>examples/</code> 문서(3P 업데이트·뉴스레터·FAQ·일반 공지)를 글의 종류에 맞게 골라 따르도록 되어 있습니다.</p></details><details id="skill-catalog"><summary>대표 스킬 8개 · 역할과 활용 예시</summary>
+    <table>
+      <tr><th>출처·스킬</th><th>하는 일·활용 예시</th></tr>
+      <tr><td>공식 · <a href="https://github.com/anthropics/skills/tree/main/skills/internal-comms" target="_blank" rel="noopener noreferrer">internal-comms</a></td><td>사내 소통 양식을 적용합니다. 주간 업데이트·공지·FAQ 초안에 활용합니다.</td></tr>
+      <tr><td>공식 · <a href="https://github.com/anthropics/skills/tree/main/skills/discernment-nudge" target="_blank" rel="noopener noreferrer">discernment-nudge</a></td><td>결론 전에 다시 확인할 질문을 2~3개 제시합니다. 숫자·가정 검토를 돕지만 사실 검증을 보장하지는 않습니다.</td></tr>
+      <tr><td>공식 · <a href="https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring" target="_blank" rel="noopener noreferrer">doc-coauthoring</a></td><td>맥락 확인·섹션 작성·독자 관점 검토를 거쳐 제안서나 정책서를 함께 만듭니다.</td></tr>
+      <tr><td>공식 · <a href="https://github.com/anthropics/skills/tree/main/skills/theme-factory" target="_blank" rel="noopener noreferrer">theme-factory</a></td><td>색·글꼴 테마를 골라 문서나 슬라이드에 적용합니다. 회사 말투나 이후 모든 결과물에 자동 적용되는 규칙은 아닙니다.</td></tr>
+      <tr><td>공식 · <a href="https://github.com/anthropics/skills/tree/main/skills/brand-guidelines" target="_blank" rel="noopener noreferrer">brand-guidelines</a></td><td>공개본은 Anthropic의 브랜드 규격입니다. 2.4에서는 제공된 가상 브랜드(데일리세이브) 규격으로 별도 스킬을 만듭니다.</td></tr>
+      <tr><td>공식 · <a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator" target="_blank" rel="noopener noreferrer">skill-creator</a></td><td>새 스킬을 작성하고 기존 스킬의 절차·발동 조건을 고칩니다.</td></tr>
+      <tr><td>커뮤니티 · <a href="https://github.com/anthropics/claude-plugins-community/tree/main/eli5" target="_blank" rel="noopener noreferrer">eli5</a></td><td>배경지식이 없는 사람에게 큰 그림과 적은 글로 설명합니다. 대상별 말투 변경은 추가로 요청합니다.</td></tr>
+      <tr><td>커뮤니티 · <a href="https://github.com/obra/superpowers" target="_blank" rel="noopener noreferrer">superpowers</a></td><td>계획·실행·검증을 나누는 개발 작업용 스킬 모음입니다. 업무 절차 설계에 참고하며 오늘 설치하지 않습니다.</td></tr>
+    </table>
+  </details></div></div><div class="step" id="skill-invoke"><div class="step-head"><span class="sn">STEP 5</span><span><span class="st">스킬을 호출하는 두 가지 방법</span></span></div><div class="step-body"><p>설치한 스킬은 두 가지 방법으로 부릅니다. <code>eli5</code>로 비교해 봅니다.</p><table><tr><th>방법</th><th>어떻게</th><th>언제 좋은가</th></tr><tr><td>① 설명과 맞게 요청</td><td>스킬 이름 없이, 스킬의 <code>description</code>과 일치하는 내용을 프롬프트에 씁니다. Claude가 맞는 스킬을 골라 불러옵니다.</td><td>자주 쓰는 일을 자연스럽게 맡길 때</td></tr><tr><td>② 이름으로 직접 호출</td><td>입력창에 <code>/스킬이름</code>을 쓰고 이어서 요청을 적습니다.</td><td>확실히 그 스킬을 쓰게 하고 싶을 때</td></tr></table><p><b>① 설명과 일치하는 내용을 프롬프트에:</b> eli5의 description은 "무언가가 어떻게 작동하는지 아주 쉬운 그림 설명을 요청할 때"입니다. 스킬 이름을 쓰지 않고 그 내용대로 요청합니다.</p><div class="prompt"><span class="pl">3 · 설명과 맞게 요청 (자동 호출)</span><pre class="ptext">MCP가 어떻게 작동하는지 처음 듣는 사람도 이해할 수 있게 아주 쉬운 그림 설명으로 보여줘.</pre></div><p><b>② 스킬 이름으로 직접 호출:</b></p><div class="prompt"><span class="pl">4 · 이름으로 직접 호출</span><pre class="ptext">/eli5 MCP가 어떻게 작동하는지</pre></div><p><b>확인:</b> ①에서 대화에 eli5 스킬을 사용했다는 표시가 나타나는지 봅니다. 자동으로 불리지 않으면 ②처럼 이름으로 부릅니다. 자동 호출이 잘 되려면 <code>description</code>에 하는 일과 쓰는 상황이 분명해야 합니다.</p></div></div>
+</section>
+
+<section class="s ch" id="ch-2-3" data-sublink="2.3 · 팀 공유문 스킬로 고치기"><div class="sec-head"><div class="sec-num">2.3</div><div><h2>팀 공유문 스킬로 고치기</h2><div class="sec-sub">internal-comms를 사용해 본 뒤, 팀 공유문 규격을 가진 스킬로 복사해 고칩니다. 공통 예시를 그대로 사용합니다.</div></div></div>
+<div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> 시작 전</div><div class="cb"><p><a href="#ch-2-2">2.2</a>의 <b>STEP 4</b>에서 <code>internal-comms</code> 스킬을 추가했습니다. 입력창의 <b>+ → 스킬</b>에서 목록에 있는지 먼저 확인합니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">원본 스킬 사용</span></span></div><div class="step-body"><p><b>프로젝트 또는 폴더</b>에서 <code>sample_data</code>가 들어 있는 폴더를 연결합니다. 원본 스킬은 <code>sample_data/skills/internal-comms/</code>에 준비되어 있습니다.</p><div class="prompt"><span class="pl">1 · 주간 상태 보고를 사내 양식으로</span><pre class="ptext">internal-comms 스킬로 가상 &quot;데일리세이브 운영팀&quot;의 3P 주간 업데이트를 작성해줘.
+먼저 sample_data/skills/internal-comms/SKILL.md와 sample_data/skills/internal-comms/examples/3p-updates.md를 실제로 읽고 그 양식을 따라줘.
+sample_data가 보이지 않으면 파일 누락으로 판단하지 말고, 자료가 들어 있는 폴더 연결을 먼저 안내해.
+
+[범위]
+- 작성 기준: 2026-09-03, 읽는 사람: 팀 매니저
+- 아래 가상 자료 세 개만 사용해.
+  sample_data/raw_meeting_notes.txt
+  sample_data/raw_meeting_notes_2.txt
+  sample_data/finance/budget_variance.csv
+
+[작성]
+- 원본 3P 양식대로 Progress·Plans·Problems를 각각 1~3문장으로 써줘.
+- 확정된 진척과 초안·제안을 구분하고, 미확정인 것은 표시해.
+- 자료에 없는 완료·승인·날짜를 추가하지 마.
+- 예산 CSV는 전사 부서별 자료(백만원)이고 회의록 예산은 프로젝트 금액(억)이야.
+  연결 근거가 없으면 엮지 말고 &quot;연결 확인 필요&quot;로 남겨줘.
+- 최종 답변은 한국어 업데이트 본문만 보여줘. 근거 표와 추가 해설은 붙이지 마.</pre></div><p><b>확인:</b> 결과의 Progress·Plans·Problems에서 각각 아래 내용을 찾습니다.</p><table>
+    <tr><th>결과 영역</th><th>여기서 볼 것</th><th>이번 자료의 예시</th></tr>
+    <tr><td><b>Progress</b></td><td>이미 진행한 일·확정된 결정</td><td>MVP 3종 확정, 30일 리텐션 KPI 확정, 예산 초안 접수</td></tr>
+    <tr><td><b>Plans</b></td><td>앞으로 할 일·목표 일정</td><td>개발 일정표 9/8, 상표 대안·예산배분안 9/10, 9/11 회의에서 데모데이 최종일 결정 예정</td></tr>
+    <tr><td><b>Problems</b></td><td>막힌 일·미확정·추가 확인</td><td>서비스명 미확정, 10월 첫주 데모 연기 제안, 예산 최종 승인 미정, 전사 CSV와 프로젝트의 연결 확인 필요</td></tr>
+  </table><p><b>예산 초안을 받은 것</b>은 Progress에, <b>예산 승인이 남은 것</b>은 Problems에 해당합니다.</p><details><summary>3P 내용 예시</summary>
+    <p><b>Progress:</b> 자동적립·목표설정·리워드알림을 MVP로 확정했습니다. 주지표는 30일 리텐션, 가입자수는 보조지표입니다.</p>
+    <p><b>Plans:</b> 개발 일정표는 9/8, 상표 대안과 채널별 예산안은 9/10까지 정리할 예정입니다. 데모데이 최종일은 9/11 회의에서 결정할 예정입니다.</p>
+    <p><b>Problems:</b> 서비스명은 유사상표 검토가 남아 있고, 데모데이는 10월 첫주로 연기 제안 중입니다. 초기 프로모션 2.5억은 초안이며, 전사 예산 CSV와 프로젝트의 연결은 확인이 필요합니다.</p>
+  </details></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">팀 공유문 규격으로 복사</span></span></div><div class="step-body"><div class="prompt"><span class="pl">2 · 팀 공유문 스킬로 만들기</span><pre class="ptext">sample_data/skills/internal-comms/SKILL.md와
+sample_data/skills/internal-comms/LICENSE.txt를 읽고,
+팀 공유문에 맞춘 &quot;team-share&quot; 스킬을 새로 만들어줘. 원본 폴더와 등록된 스킬은 그대로 둬.
+SKILL.md의 YAML name은 team-share로 지정하고, description에 역할과 발동 조건을 적어줘.
+오늘은 아래 공통 규격을 사용해. 새 업무 아이디어를 물어보지 마.
+
+[역할] 워크샵이나 학습 결과를 팀원에게 설명하는 공유문 초안을 작성한다.
+[발동] &quot;팀 공유문&quot;, &quot;워크샵 공유자료 정리&quot; 요청에 사용한다.
+[출력 순서]
+1. 핵심 내용 3줄
+2. 팀 업무에서 해볼 일 3개
+3. 이번에 만든 자료: 파일명 / 용도
+4. 만든 스킬: 역할 / 입력 자료 / 호출 예시
+5. 사람이 확인할 것
+6. 첨부할 자료 목록
+
+[규칙]
+- 사실과 수치는 입력 자료를 근거로 쓰고, 없으면 &quot;확인 필요&quot;로 둔다.
+- 업무 예시는 가상으로 작성한다. 실제 고객정보나 미공개 정보를 넣지 않는다.
+- 메일·메신저 발송, Confluence 발행은 하지 않는다. 초안만 만든다.
+- 원본을 수정·삭제하지 않고 output에 새 파일로 저장한다.
+- 업무 내용 중 확인할 사항은 5번에만 모으고, 본문 뒤에 같은 목록을 반복하지 않는다.
+
+[이번 작업의 저장 방식]
+- 기존 파일은 수정·덮어쓰지 마. 임시 파일 정리를 포함해 파일·폴더를 삭제하지 마.
+- output/skills/team-share/에 SKILL.md를 새로 만들어줘.
+  폴더가 이미 있으면 output/skills/실습2/team-share/처럼 번호를 늘려 새 경로를 사용해.
+- 원본 LICENSE.txt를 내용 변경 없이 함께 복사하고, SKILL.md의 license는 이 파일을 참조하게 해.
+  본문에는 원본 internal-comms를 팀 공유문 규격으로 수정한 사본임을 한 줄로 남겨줘.
+- 필요한 작성 규칙은 references/에 새로 작성해. 원본의 examples/는 복사하지 않아도 돼.
+  SKILL.md에서는 이번에 실제로 만든 파일만 상대 경로로 참조하고, 쓰지 않는 원본 참조는 제거해.
+- ZIP은 Python의 zipfile과 io.BytesIO로 메모리에서 완성해.
+  다시 열어 SKILL.md·LICENSE.txt와 참조한 파일이 모두 들어 있고 읽히는지 확인해.
+- 확인한 ZIP을 output/team-share.zip에 새 파일 생성 모드(xb)로 한 번만 저장해.
+  ZIP 이름이 겹치면 번호를 붙이고, ZIP 최상위 폴더명과 YAML name은 team-share로 유지해.
+- 디스크에 임시 ZIP을 만들거나 이름을 바꾸는 압축 방식은 사용하지 마.
+
+정상적으로 완료되면 변경된 규칙과 스킬 폴더·ZIP 경로만 표로 보여줘.
+복사하지 않는 examples/나 해결된 제작 이력을 &quot;확인 필요&quot;로 덧붙이지 마.
+sample_data가 보이지 않으면 파일 누락으로 판단하지 말고, 자료가 들어 있는 폴더 연결을 먼저 안내해.
+실제 파일 생성에 실패한 경우에는 성공한 것으로 쓰지 마.</pre></div></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">전역 스킬로 저장</span></span></div><div class="step-body"><p>STEP 2 결과를 확인한 같은 대화에서 아래 프롬프트를 보냅니다.</p><div class="prompt"><span class="pl">3 · team-share 스킬 저장</span><pre class="ptext">해당 Skill을 "team-share" 스킬로 전역에 저장해줘.</pre></div><p><b>확인:</b> <b>사용자 지정 → 스킬 → 내 항목</b>에 <code>team-share</code>가 나타납니다.</p><p>저장이 제한되면 규칙을 프로젝트 지침으로 사용합니다. 이 공유문 규격은 <a href="module3.html#ch-3-1">3.1</a>에서 워크샵 자료를 정리할 때 다시 사용합니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 4</span><span><span class="st">/team-share로 사용</span></span></div><div class="step-body"><p>새 대화에서 <code>/team-share</code>로 STEP 1과 같은 자료를 정리합니다.</p><div class="prompt"><span class="pl">4 · team-share로 같은 자료 정리</span><pre class="ptext">/team-share 가상 "데일리세이브 운영팀"의 팀 공유문을 작성해줘.
+[범위]
+- 작성 기준: 2026-09-03, 읽는 사람: 팀 매니저
+- 아래 가상 자료 세 개만 사용해.
+  sample_data/raw_meeting_notes.txt
+  sample_data/raw_meeting_notes_2.txt
+  sample_data/finance/budget_variance.csv</pre></div><p><b>확인:</b> 결과가 team-share의 출력 순서(핵심 내용 3줄 → 팀 업무에서 해볼 일 → 만든 자료 → 만든 스킬 → 사람이 확인할 것 → 첨부 자료)를 따르는지 보고, STEP 1의 3P 업데이트와 무엇이 달라졌는지 비교합니다.</p></div></div>
+</section>
+
+<section class="s ch" id="ch-2-4" data-sublink="2.4 · 브랜드 가이드 스킬 만들기"><div class="sec-head"><div class="sec-num">2.4</div><div><h2>브랜드 가이드 스킬 만들기</h2><div class="sec-sub">가상 브랜드 데일리세이브의 CI를 스킬에 묶고, 배경에 맞는 로고를 골라 안내문과 PPT에 적용합니다.</div></div></div>
+<div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg> 새 프로젝트에서 시작</div><div class="cb"><p>2.4는 <b>새 프로젝트</b>에서 진행합니다. <b>프로젝트 → 새 프로젝트</b>에서 이름을 <code>브랜드 가이드 실습</code>으로 정하고, 같은 실습 폴더를 연결합니다.</p></div></div><h3>사용할 자료</h3><table>
+    <tr><th>sample_data/brand/</th><th>용도</th></tr>
+    <tr><td>logo_dailysave/</td><td>CI 원본 4종과 ready 폴더의 배치용 PNG (가상 브랜드)</td></tr>
+    <tr><td>CI_미리보기.html</td><td>한글·영문, 밝은 배경·어두운 배경 조합 보기</td></tr>
+    <tr><td>데일리세이브_브랜드규격_실습용.md</td><td>CI 선택과 문서·슬라이드 작성 규칙</td></tr>
+    <tr><td>브랜드_검수용_안내문.html</td><td>색·글자·로고 비율을 고쳐볼 가상 안내문</td></tr>
+  </table><p><b>밝은 배경에는 기본색 CI, 어두운 배경에는 흰색 CI</b>를 사용합니다. 아래 순서로 한글·영문 파일이 준비되어 있습니다.</p><figure class="shot"><img src="assets/img/cw_17.png" alt="데일리세이브 CI 4종. 왼쪽은 밝은 배경용 기본색, 오른쪽은 어두운 배경용 흰색입니다." loading="lazy"><figcaption>데일리세이브 CI 4종: 배경과 표기에 맞는 파일을 선택합니다.</figcaption></figure><p>로고·CI 색은 <code>sample_data/brand/데일리세이브_브랜드규격_실습용.md</code>의 CI 규칙을 따릅니다(가상 브랜드이므로 실제 업무에서는 자사 공식 CI 안내로 대체합니다). 글꼴·크기·문서 배치는 실습용 규칙입니다.</p><div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">CI를 포함한 스킬 만들기</span></span></div><div class="step-body"><div class="prompt"><span class="pl">1 · CI를 묶은 브랜드 스킬</span><pre class="ptext">아래 자료로 &quot;daily-save-brand-guide&quot; 스킬을 만들어줘.
+- sample_data/brand/데일리세이브_브랜드규격_실습용.md
+- sample_data/brand/logo_dailysave/ (한글·영문 기본색·흰색 CI, ready 작업용 파일 포함)
+- sample_data/brand/CI_미리보기.html
+
+[스킬 규칙]
+- name은 daily-save-brand-guide. description에 문서·HTML·PPT의 데일리세이브 CI 적용·점검에 쓴다고 적어.
+- 먼저 규격을 읽고, 브랜드 규격의 CI 기준과 워크샵용 문서 규칙을 구분해 적용해.
+- 언어와 배경에 맞는 CI 파일을 선택해. 밝은 배경에는 기본색, 어두운 배경에는 흰색 파일을 써.
+- 배치에는 ready 폴더의 PNG를 사용하고, 색·형태·가로세로 비율은 바꾸지 마.
+- 원문 사실·수치·미확정 표시를 보존하고, 적용한 CI 파일명과 선택 이유를 알려줘.
+- 원본 수정·삭제와 외부 발송·게시 없이 output에 새 파일로 저장해.
+
+[묶을 파일]
+output/skills/daily-save-brand-guide/SKILL.md
+output/skills/daily-save-brand-guide/references/brand-guide.md
+output/skills/daily-save-brand-guide/references/CI_미리보기.html
+output/skills/daily-save-brand-guide/assets/logo_dailysave/ (제공 폴더 전체 복사, ready 포함)
+output/skills/daily-save-brand-guide/README.md (용도·사용 예시)
+
+SKILL.md는 ---로 감싼 YAML의 name·description으로 시작하고, 자료는 스킬 안의 상대 경로로 참조해.
+복사한 규격 문서의 입력 폴더 경로도 스킬에 묶인 자료 경로로 맞춰줘.
+같은 이름의 내 스킬이 있으면 비교해 보완하고 이전 버전은 보존해.
+폴더를 output/daily-save-brand-guide.zip으로 묶어줘. ZIP의 최상위는 daily-save-brand-guide/ 폴더로 하고, 이름이 겹치면 번호를 붙여 새로 저장해.
+끝나면 적용 규칙과 ZIP에 넣은 파일 목록을 보여줘.</pre></div><p>ZIP에 규격 문서와 <b>CI 원본·ready 폴더</b>가 함께 들어 있는지 확인합니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">전역 스킬로 저장</span></span></div><div class="step-body"><p>STEP 1 결과를 확인한 같은 대화에서 아래 프롬프트를 보냅니다.</p><div class="prompt"><span class="pl">2 · 브랜드 스킬 저장</span><pre class="ptext">해당 Skill을 "daily-save-brand-guide" 스킬로 전역에 저장해줘.</pre></div><p><b>확인:</b> <b>사용자 지정 → 스킬 → 내 항목</b>에 <code>daily-save-brand-guide</code>가 나타납니다.</p><details class="visual-example"><summary>제공된 안내문 미리보기</summary><figure class="shot"><img src="assets/img/cw_18.png" alt="입력 예시: 색·글꼴·로고 비율을 고쳐볼 가상 안내문입니다." loading="lazy"><figcaption>입력 예시: 색·글꼴·로고 비율을 고쳐볼 가상 안내문입니다.</figcaption></figure></details></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">가상 안내문에 적용</span></span></div><div class="step-body"><div class="prompt"><span class="pl">3 · 배경에 맞는 CI 적용</span><pre class="ptext">daily-save-brand-guide 스킬로 sample_data/brand/브랜드_검수용_안내문.html을 고쳐서
+output/브랜드_적용_안내문.html에 새로 저장해줘.
+
+- 상단 안내 영역은 파란 배경에 한글 흰색 CI, 본문은 흰 배경에 한글 기본색 CI를 사용해.
+- CI는 스킬의 assets/logo_dailysave/ready/에 있는 PNG를 넣어줘.
+- 원문의 사실과 &quot;미확정&quot; 표시는 유지해.
+- 로고·CSS를 HTML 안에 넣어 인터넷 없이 열리게 해줘.
+- 어느 영역에 어떤 CI를 썼는지, 색·글꼴·로고 비율이 어떻게 바뀌었는지 표로 알려줘.</pre></div><p>원본과 결과 HTML을 열어 <b>상단의 흰색 CI·본문의 기본색 CI</b>, 로고 비율, 글자 크기를 비교합니다. 가상 내용과 「미확정」 표시도 유지되어야 합니다.</p></div></div><p><a href="module3.html#ch-3-1">3.1</a>에서는 같은 스킬로 영문 CI를 적용한 워크샵 PPT를 만듭니다.</p>
+</section>
+
+<section class="s ch" id="ch-2-5" data-sublink="2.5 · [Bonus] 카드뉴스 스킬 만들기"><div class="sec-head"><div class="sec-num">2.5</div><div><h2>[Bonus] 카드뉴스 스킬 만들기</h2><div class="sec-sub">카드뉴스 제작 지침과 레퍼런스 디자인으로 결과를 만들고, 다듬은 방식을 나만의 스킬로 저장합니다.</div></div></div>
+<div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">카드뉴스 지침 입력</span></span></div><div class="step-body"><p>새 대화에서 아래 <b>카드뉴스 제작 가이드</b>를 붙여넣어 보냅니다. 내용이 길어 접혀 있으니 <b>전체 펼치기</b>로 확인하고, <b>복사</b> 버튼으로 전체를 복사합니다.</p><div class="prompt"><span class="pl">1 · 카드뉴스 지침</span><pre class="ptext"># 카드뉴스 제작 가이드
+
+## 1. 보편 제작 원칙
+
+- 장르와 주제에 관계없이 모든 카드뉴스에 적용되는 규칙
+
+### 원칙 1:
+- 카드뉴스 표지가 조회수를 결정한다.
+- 표지에서 사람들의 시선을 끌어야 하며 두번째 슬라이드로 넘어가도록 내용을 남겨야 한다.
+- 카드뉴스는 탐색 피드에서 대부분 노출된다.
+
+### 원칙 2:
+- 떡상하는 카드뉴스의 구조는 다음과 같다.
+
+Hook (표지) → 핵심 내용 → CTA (마무리)
+
+
+- 스토리텔링, 공감요소는 중간에 채운다.
+- 후킹요소와 CTA는 어떤 테마든 반드시 존재해야 한다.
+
+### 원칙 3:
+- 한 장에 전달하려는 메시지는 하나여야 한다.
+- 불필요한 내용을 제거하고 가장 요약된 상태로 제공하는 것이 핵심.
+- 텍스트와 시각 요소가 같은 메시지를 가리켜야 하며,
+- 한 장에서 두 가지를 말하려 하면 아무것도 전달되지 않는다.
+
+### 원칙 4 — 디자인 기본 규칙:
+- 폰트: Pretendard / Noto Sans KR
+- 여백: 균일하게 유지, 정렬 기준 고정
+- 레이아웃: '4-4. 레이아웃 구조 패턴'을 참고해서 내용에 맞는 레이아웃 구조 최대 2개 이상 사용, 하단에 사용자 아이디 푸터 필수 배치
+
+#### 4-1. 가독성 (Readability):
+'보는' 것이 아니라 '읽히는' 디자인
+
+- **위계 설정 (Typography Hierarchy)**: 제목 / 본문 / 태그·푸터의 폰트 크기와 굵기를 명확히 차별화. 제목은 본문보다 최소 1.5배 이상 크고 두꺼워야 시선이 자연스럽게 흐른다.
+- **행간·자간**: 행간(`line-height`) 1.4~1.6배 유지. 본문 자간(`letter-spacing`)은 살짝 좁게(-0.02em) 설정하면 가독성이 상승한다.
+- **대비 최적화**: 배경과 텍스트의 명도 차이를 확실하게. 밝은 배경 위에는 무거운 블랙보다 짙은 그레이(#111~#333)를 사용해 눈의 부담을 줄인다.
+
+#### 4-2. 전체적인 조화 (Overall Harmony):
+브랜드 정체성을 유지하는 일관성
+
+- **톤앤매너 유지**: 메인 컬러와 서브 컬러의 사용 범위를 모든 슬라이드에 동일하게 적용. 강조 키워드는 항상 같은 컬러 계열을 사용해 독자가 본능적으로 중요한 정보임을 인지하게 한다.
+- **여백의 일관성 (Safe Zone)**: 모든 슬라이드의 상하좌우 여백(Margin)을 고정값으로 유지. 슬라이드를 넘길 때 텍스트·로고 위치가 흔들리면 전문성이 떨어져 보인다.
+- **UI 요소 통일**: 태그의 둥글기(border-radius), 화살표 아이콘 크기, 푸터 위치를 고정해 전체적인 시각적 리듬감을 부여한다.
+
+#### 4-3. 구성요소 비율 (Component Ratio):
+시각적 균형을 만드는 8:2 법칙
+
+- **콘텐츠 vs 여백**: 텍스트·그래픽 요소는 슬라이드 면적의 70~80%를 넘지 않는다. 나머지 20~30%의 여백이 메인 메시지를 돋보이게 한다.
+- **상중하 수직 배분**:
+- 상단 15% — 태그 및 카테고리 (시각적 앵커)
+- 중앙 70% — 메인 타이틀 및 핵심 본문 (정보 전달의 핵심)
+- 하단 15% — 푸터 및 내비게이션 (브랜딩 및 행동 유도)
+- **텍스트 밀도**: 한 문장은 최대 2줄을 넘지 않도록 나눈다. 문단 사이의 간격은 제목-본문 간격보다 넓게 배치해 시각적 숨통을 틔운다.
+
+#### 4-4. 레이아웃 구조 패턴:
+- 상단 태그 / 중앙 메인 카피 / 보조 카피 / 중앙 하이라이트 텍스트 박스 / 사용자 계정 푸터 및 화살표 아이콘
+- 좌상단 태그 / 질문형 메인 카피 / 3단 인터페이스 그래픽 / 번호순 상세 설명 박스 / 사용자 계정 푸터 및 화살표 아이콘
+- 좌상단 태그 / 단계별 메인 카피 / 보조 카피 / 아이콘+설명 리스트 / 하단 강조(Tip) 박스 / 사용자 계정 푸터 및 화살표 아이콘
+- 좌상단 태그 / 좌정렬 메인 카피 / 보조 카피 / 저장 유도 배지 / 사용자 계정 푸터 및 화살표 아이콘
+- 좌상단 태그 / 메인 카피 / 핵심 공식(텍스트) / 상황별 프롬프트 카드 2종 / 사용자 계정 푸터 및 화살표 아이콘
+- 중앙 태그 / 중앙 정렬 메인 카피 / 보조 카피 / 알약형 CTA 버튼 / 하단 액션 아이콘(저장, 공유) / 사용자 계정 푸터
+- 카테고리 태그 / 메인 카피 / 보조 카피 / 그래픽 요소 / 사용자 계정 푸터
+
+#### 디자인 규칙 :
+- 색상 정확도, 요소 간 간격 일관성, 내부 padding 균형
+---
+
+## 2. 스크립트 작성 규칙:
+
+### 규칙 1 — 본문 텍스트 밀도 기준 :
+각 슬라이드의 본문 텍스트는 반드시 아래 기준을 충족해야 한다.
+
+- 리스트형 슬라이드: 항목당 1~2문장 분량의 설명 포함
+(단순 키워드 나열 금지. 각 항목에 수치·이유·예시 중 하나 이상 포함)
+- 서술형 슬라이드: 최소 3~4문장 분량의 본문 작성
+- 숫자·통계가 있는 경우: 맥락 설명 1문장 반드시 추가
+예) ❌ "매출 6,000억 원"
+✅ "매출 6,000억 원 — 창업 9개월 만에 달성한 수치로,
+시리즈 A 유치 없이 AI 도구만으로 운영한 결과"
+
+### 규칙 2 — 원문 충실도 :
+기사·원고를 기반으로 제작할 경우, 각 슬라이드의 본문은
+원문에서 해당 슬라이드 주제와 관련된 핵심 정보를
+빠짐없이 추출해 담아야 한다.
+
+- 원문의 사례, 인용문, 수치, 배경 설명을 슬라이드에 분산 배치
+- 슬라이드 한 장당 원문 정보 최소 2~3개 포인트 포함
+- "내용 요약"이 아니라 "내용 전달"이 목표임을 기억할 것
+
+### 규칙 3 — 슬라이드 수 결정 기준 :
+원문의 정보량이 많을 경우, 슬라이드 수를 늘려서
+각 장의 밀도를 유지한다. 정보를 압축해 슬라이드 수를 줄이지 말 것.
+
+정보량 기준:
+- 짧은 원고(500자 이하): 5~6장
+- 중간 원고(500~1500자): 7~9장
+- 긴 원고(1500자 이상): 10~13장</pre></div></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">레퍼런스 디자인 분석 요청</span></span></div><div class="step-body"><p>참고할 웹사이트 주소나 이미지를 함께 붙여넣거나 첨부하고, 카드뉴스로 만들 원고(주제·기사·메모)도 같이 보냅니다.</p><div class="prompt"><span class="pl">2 · 레퍼런스 디자인 적용</span><pre class="ptext">다음 웹사이트 혹은 이미지의 디자인 포인트 분석 후, 분석 포인트를 적용해서 이미지를 생성해줘. 카드뉴스 스크립트의 모든 구성 요소 포함해. 사이즈는 1080x1080이고, 이미지 제작해서 html로 뽑아줘. Html로 뽑은 후 별도 폴더에 png로도 저장해</pre></div><p><b>확인:</b> 1080×1080 크기의 HTML과, 별도 폴더에 저장된 PNG가 함께 만들어졌는지 봅니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">수정 및 보완 후 스킬로 저장</span></span></div><div class="step-body"><p>결과를 보며 글자 크기·여백·색 같은 부분을 같은 대화에서 고칩니다. 마음에 들면 아래 프롬프트로 저장합니다.</p><div class="prompt"><span class="pl">3 · 카드뉴스 스킬 저장</span><pre class="ptext">해당 Skill을 "soomin-card-news" 스킬로 전역에 저장해줘.</pre></div><p><code>soomin</code> 대신 내 이름이나 계정명을 넣어 나만의 스킬 이름으로 저장해도 됩니다. 다음부터는 원고만 주고 <code>/soomin-card-news</code>로 같은 방식의 카드뉴스를 만들 수 있습니다.</p></div></div>
+</section>
+
+
+</main>
+<script src="assets/site/site.js"></script>
+<script src="assets/theme/module.js" defer></script>
+</body>
+</html>

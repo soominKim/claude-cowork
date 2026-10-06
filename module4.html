@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 4 · 나의 Skill 만들기 | Claude Cowork 핵심 익히기</title>
+<style>
+  :root{
+    --paper:#FBF9F4; --paper-2:#F3EFE6;
+    --ink:#1B2430; --ink-soft:#48525F; --ink-faint:#8A9099;
+    --line:#E2DBCD; --hl:#FFE45C;
+    --acc:#2E9E6B;           /* 워크샵 = green (실습/직접 하기) */
+    --acc-bg:#E0F0E7;
+    --blue:#3B6EA5; --blue-bg:#E6EEF6; --blue-line:#C4D6E8; --blue-dk:#2C5580;
+    --warn:#C9852B; --warn-bg:#FBEFD8; --gap:#D6503C; --gap-bg:#F8E3DE;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Space Grotesk',-apple-system,sans-serif;
+    --kr:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--kr);font-size:17px;line-height:1.78;-webkit-font-smoothing:antialiased;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 2.1em;background-position:0 -1px;background-attachment:local}
+  .sheet{max-width:var(--maxw);margin:0 auto;padding:0 26px 36px;position:relative}
+  a{color:var(--acc);text-decoration:none;border-bottom:1px solid rgba(46,158,107,.4)}
+  a:hover{border-bottom-color:var(--acc)}
+
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:76px 26px 30px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--acc)}
+  .kicker .series{color:var(--ink-soft)}
+  .kicker .wbadge{font-family:var(--mono);font-size:10.5px;font-weight:700;background:var(--acc);color:#fff;border-radius:20px;padding:2px 9px;letter-spacing:.08em}
+  h1.title{font-family:var(--disp);font-weight:700;font-size:clamp(31px,5.6vw,50px);line-height:1.09;letter-spacing:-.015em;margin:0 0 18px}
+  h1.title .em{position:relative;white-space:nowrap}
+  h1.title .em::after{content:"";position:absolute;left:-3px;right:-3px;bottom:.08em;height:.42em;background:var(--hl);z-index:-1;transform:rotate(-.6deg);border-radius:2px}
+  .subtitle{font-family:var(--kr);font-size:clamp(18px,2.6vw,22px);color:var(--ink-soft);font-weight:500;margin:0 0 30px}
+  .meta{font-family:var(--mono);font-size:13.5px;color:var(--ink-faint);line-height:1.7;padding-top:20px;border-top:1px solid var(--line)}
+  .meta b{color:var(--ink-soft);font-weight:500}
+
+  .thesis{max-width:var(--maxw);margin:34px auto 0;padding:0 26px}
+  .thesis-inner{background:var(--ink);color:#F6F3EC;border-radius:14px;padding:32px 34px 28px;position:relative;overflow:hidden}
+  .thesis-lead{font-size:14px;color:#B9BFC8;font-family:var(--mono);letter-spacing:.04em;margin-bottom:10px}
+  .thesis-main{font-family:var(--disp);font-weight:600;font-size:clamp(19px,3.2vw,25px);line-height:1.32;margin:0}
+  .thesis-main .y{color:var(--hl)}
+  .builds{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .bld{flex:1;min-width:220px;background:#2A3340;border-radius:10px;padding:13px 15px}
+  .bld .bn{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;font-weight:700}
+  .bld.b1 .bn{color:#9CC3E8} .bld.b2 .bn{color:#8FE0BA}
+  .bld .btt{font-family:var(--disp);font-weight:700;font-size:15px;color:#F6F3EC;margin:3px 0 4px}
+  .bld .bd{font-size:12.5px;color:#B9BFC8;line-height:1.5}
+  /* 여백 정리 — 카드 사이가 82px까지 벌어져 있었다 */
+  section{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  main.sheet > section:first-child{padding-top:22px}
+  main.sheet > section > .sec-head{margin-top:30px}
+  .step{margin:16px 0}
+  .sec-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+  .sec-num{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--paper);background:var(--ink);min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px}
+  h2{font-family:var(--disp);font-weight:700;font-size:clamp(24px,4vw,32px);line-height:1.2;letter-spacing:-.01em;margin:0}
+  .sec-sub{color:var(--ink-soft);font-size:15px;margin-top:4px;font-family:var(--mono);letter-spacing:.02em}
+  p{margin:14px 0}
+  .lead{font-size:19px;color:var(--ink)}
+  strong{font-weight:700}
+  .mk{background:linear-gradient(transparent 58%,var(--hl) 58% 92%,transparent 92%);padding:0 2px;font-weight:600}
+  code{font-family:var(--mono);font-size:.85em;background:var(--paper-2);padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+
+
+  /* STEP block */
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;margin:18px 0;overflow:hidden}
+  .step-head{display:flex;gap:14px;align-items:center;padding:15px 20px;background:var(--acc-bg);border-bottom:1px solid #B6DEC8}
+  .step-head .sn{font-family:var(--mono);font-weight:700;font-size:12px;color:#fff;background:var(--acc);min-width:56px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.03em}
+  .step-head .st{font-family:var(--disp);font-weight:700;font-size:17px;color:var(--ink)}
+  .step-head .stag{font-family:var(--mono);font-size:11.5px;color:var(--acc);margin-top:2px;display:block}
+  .step-body{padding:16px 20px 20px}
+  .step-goal{background:var(--acc-bg);border-radius:8px;padding:8px 13px;margin:0 0 14px;font-size:14.5px;color:var(--ink-soft);display:flex;gap:8px;align-items:baseline;line-height:1.5}
+  .step-goal b{color:#1f7a50;font-family:var(--disp);white-space:nowrap}
+  .step-body ol{margin:0;padding-left:22px}
+  .step-body ol li{margin:8px 0;font-size:15.5px}
+  .step-body ul{margin:8px 0;padding-left:20px;font-size:14.5px;color:var(--ink-soft)}
+
+  /* 표 — 레퍼런스 모듈(W2-3)과 동일 스타일. 워크샵 템플릿엔 원래 표가 없었다 */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+  th{background:var(--paper-2);font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+
+
+  /* 팁 줄 — 레퍼런스 모듈과 동일 */
+  .tipline{display:flex;gap:9px;align-items:baseline;margin:9px 0;font-size:15.5px;
+    color:var(--ink-soft);line-height:1.55;padding-left:2px}
+  .tipline .ti{flex-shrink:0;font-size:14px;line-height:1.6}
+  .tipline b,.tipline strong{color:var(--ink)}
+  .tipline b,.tipline strong{color:var(--ink)}
+
+  /* 파트 구분 — 3·4번 모듈과 동일한 미니멀 구분자 */
+  .part{max-width:var(--maxw);margin:38px auto 0;padding:0 26px}
+  .part-inner{display:flex;gap:13px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:9px}
+  .part-n{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--ink);border-radius:7px;padding:4px 11px;flex-shrink:0}
+  .part-t{font-family:var(--disp);font-weight:700;font-size:clamp(18px,3vw,22px);line-height:1.2}
+  .part-d{font-size:15px;color:var(--ink-soft);margin-top:7px;padding:0 26px;max-width:var(--maxw);margin-left:auto;margin-right:auto;line-height:1.55}
+
+  .path{font-family:var(--mono);font-size:13px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;white-space:nowrap}
+
+  /* blue variant for PART 1 */
+  .p1sec .step-head{background:var(--blue-bg);border-bottom-color:var(--blue-line)}
+  .p1sec .step-head .sn{background:var(--blue)}
+  .p1sec .step-head .stag{color:var(--blue)}
+  .p1sec .step-goal{background:var(--blue-bg)} .p1sec .step-goal b{color:var(--blue-dk)}
+  .p1sec .rnote{background:var(--blue-bg);border-color:var(--blue-line)}
+  .p1sec .rnote b{color:var(--blue-dk)}
+  .p1sec a{color:var(--blue);border-bottom-color:rgba(59,110,165,.4)}
+  .p1sec .sec-num{background:var(--blue)}
+
+  /* prompt to copy */
+  .prompt{background:var(--ink);color:#E7E3D9;border-radius:10px;padding:14px 16px;margin:12px 0;font-size:14.5px;line-height:1.6;position:relative;border-left:4px solid var(--hl)}
+  .prompt .pl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--hl);display:block;margin-bottom:6px}
+  .prompt .ptext{font-family:var(--kr)}
+
+  /* result note */
+  .rnote{background:var(--acc-bg);border:1px solid #B6DEC8;border-radius:9px;padding:11px 14px;margin:12px 0 0;font-size:14px;color:var(--ink-soft)}
+  .rnote b{color:#1f7a50}
+
+  .call{border-radius:12px;padding:18px 20px;margin:20px 0;font-size:15px;line-height:1.7;border:1px solid var(--line);background:#fff}
+  .call .ct{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+  .call.tip{background:#FFFDF4;border-color:#F0E4B8} .call.tip .ct{color:#B08900}
+  .call.warn{background:var(--gap-bg);border-color:#EAC3B9} .call.warn .ct{color:var(--gap)}
+  .call.blue{background:var(--blue-bg);border-color:var(--blue-line)} .call.blue .ct{color:var(--blue)}
+  .call p:first-of-type{margin-top:0} .call p:last-child{margin-bottom:0}
+
+  /* concept: 알려주는 → 해주는 */
+  .flip{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+  .flip .card{border-radius:12px;padding:16px 18px;border:1px solid var(--line)}
+  .flip .card.a{background:var(--paper-2)} .flip .card.b{background:var(--blue-bg);border-color:var(--blue-line)}
+  .flip .card .cl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .flip .card.b .cl{color:var(--blue)}
+  .flip .card .cm{font-family:var(--disp);font-weight:700;font-size:16px;margin:4px 0 4px}
+  .flip .card .cd{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .flip .arrow{display:flex;align-items:center;font-size:22px;color:var(--blue)}
+  @media (max-width:600px){.flip{grid-template-columns:1fr}.flip .arrow{justify-content:center;transform:rotate(90deg)}}
+
+  /* prep checklist */
+  .prep{display:flex;flex-direction:column;gap:8px;margin:20px 0}
+  .pchk{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 16px}
+  .pchk .box{width:20px;height:20px;border:2px solid var(--acc);border-radius:5px;flex-shrink:0}
+  .p1sec .pchk .box{border-color:var(--blue)}
+  .pchk .pt{font-weight:600;font-size:15px}
+  .pchk .pd{font-size:13px;color:var(--ink-soft)}
+
+  /* tools row */
+  .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+  .tool{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .tool .te{font-size:19px} .tool .tt{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px} .tool .td{font-size:13px;color:var(--ink-soft)}
+
+  /* 공개 디자인 시스템 카드 — 이름·설명 위, 실제 화면 캡처 아래 */
+  .dsys{background:#fff;border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+  .dsys .dh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:15px 18px 0}
+  .dsys .dn{font-family:var(--disp);font-weight:700;font-size:16px}
+  .dsys .dtag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:#1f7a50;background:var(--acc-bg);border-radius:20px;padding:2px 9px}
+  .dsys .dd{font-size:14.5px;color:var(--ink-soft);line-height:1.6;padding:6px 18px 13px;margin:0}
+  .dsys img{width:100%;display:block;border-top:1px solid var(--line)}
+  .dsys .dcap{font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding:8px 18px 12px}
+
+  /* 4-stage pattern */
+  .pattern{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:22px 0}
+  .pstage{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 12px;text-align:center;position:relative}
+  .pstage .pe{font-size:22px} .pstage .pn{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px}
+  .pstage .pdd{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .pstage:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:15px;z-index:1}
+  @media (max-width:600px){.pattern{grid-template-columns:1fr 1fr}.pstage:not(:last-child)::after{display:none}}
+
+  .pull{border-left:4px solid var(--acc);padding:8px 0 8px 22px;margin:26px 0;font-size:18px;font-style:italic;color:var(--ink);font-family:var(--kr);line-height:1.5}
+  .pull.blue{border-left-color:var(--blue)}
+  .pull .src{display:block;font-style:normal;font-size:13px;color:var(--ink-faint);font-family:var(--mono);margin-top:8px}
+
+  .cheat{background:var(--ink);color:#EDEAE2;border-radius:16px;padding:30px;margin:30px 0}
+  .cheat h2{color:#fff;font-family:var(--disp)}
+  .cheat .csq{font-family:var(--disp);font-size:16px;color:var(--hl);margin:0 0 18px;line-height:1.45}
+  .cheat .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .cheat .cpart .cph{font-family:var(--mono);font-size:11px;letter-spacing:.1em;font-weight:700;margin-bottom:8px}
+  .cheat .cpart.c1 .cph{color:#9CC3E8} .cheat .cpart.c2 .cph{color:#8FE0BA}
+  .cheat ol{padding-left:20px;margin:0} .cheat ol li{margin:6px 0;color:#C4C9D0;font-size:14px} .cheat ol li b{color:#fff}
+  /* 어두운 배경에서 code 의 밝은 배경이 형광펜처럼 보여 글자가 묻힌다 — 배경·테두리를 없앤다 */
+  /* 한 장 요약의 라벨·값 2열 정렬 (다른 모듈과 동일 규칙) */
+  .cheat .row{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:15px;color:#C4C9D0;flex-wrap:wrap;line-height:1.5}
+  .cheat .row:last-child{border:none}
+  .cheat .row b{color:#fff;font-family:var(--disp)}
+  .cheat .k{min-width:150px;font-family:var(--mono);color:var(--hl);font-size:13.5px;flex-shrink:0}
+  .cheat code{background:transparent;border:none;color:#FFE9A8;padding:0;font-size:.92em}
+  @media (max-width:600px){.cheat .cgrid{grid-template-columns:1fr;gap:18px} .cheat .k{min-width:auto}}
+  .todo{background:var(--hl);color:var(--ink);border-radius:12px;padding:18px 22px;margin-top:22px;font-weight:600;font-size:16px}
+  .todo .tt{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block}
+
+  .sources{margin-top:40px;padding-top:24px;border-top:2px solid var(--ink);font-size:14px;color:var(--ink-soft)}
+  .sources h3{font-size:15px;margin:0 0 12px;color:var(--ink)}
+  .sources ul{padding-left:18px;line-height:1.7}
+  footer.foot{max-width:var(--maxw);margin:0 auto;padding:28px 26px;text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:12px}
+  .nav-next{display:inline-flex;gap:10px;align-items:center;margin-top:8px;color:var(--ink-soft)}
+
+  @media (max-width:680px){body{font-size:16px} .tools{grid-template-columns:1fr} .step-head{flex-wrap:wrap}}
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.in{opacity:1;transform:none}
+  }
+
+figure.fig{margin:14px 0} figure.fig img{width:100%;display:block;border:1px solid var(--line);border-radius:12px} figure.fig figcaption{font-size:13px;color:var(--ink-soft);margin-top:6px;text-align:center}
+.tools.c4{grid-template-columns:repeat(4,1fr)} @media (max-width:680px){.tools.c4{grid-template-columns:1fr 1fr}}
+.who{font-size:12px;color:var(--ink-faint);white-space:nowrap}
+</style>
+<link rel="stylesheet" href="assets/theme/minimal.css">
+<style id="w33-extra">
+  .subtitle.cowork-subtitle{max-width:none}
+  .cowork-subtitle-tail{display:inline-block;max-width:100%}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .sec-num{font-size:13px!important;letter-spacing:-.02em}
+  h2 .badge{font-size:12px;vertical-align:middle;margin-left:8px;font-weight:400}
+  .call .cb>*:first-child{margin-top:0}.call .cb>*:last-child{margin-bottom:0}.call .cb p{margin:0 0 8px}.call .cb table{margin:10px 0 0}
+  .shot{margin:16px 0}.shot img{display:block;max-width:100%;border:1px solid var(--hair);border-radius:12px}.shot figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+  details{border:1px solid var(--hair);border-radius:8px;padding:0 16px;margin:14px 0;background:var(--canvas)}
+  details>summary{cursor:pointer;padding:12px 0;font-weight:500;color:var(--ink);list-style:none;display:flex;align-items:center;gap:8px;font-size:14.5px}
+  details>summary::-webkit-details-marker{display:none}
+  details>summary::before{content:"▸";color:var(--mute-2);font-size:12px;transition:transform .15s}
+  details[open]>summary::before{transform:rotate(90deg)}
+  details[open]>summary{border-bottom:1px solid var(--hair-cool);margin-bottom:12px}
+  details>*:last-child{margin-bottom:14px}
+  .filebox{border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:14px 0}
+  .filebox .fh{padding:10px 14px;font-size:13px;color:var(--mute);background:var(--canvas-soft);border-bottom:1px solid var(--hair-cool)}
+  .filebox .fn{font-family:var(--mono);font-size:12.5px}
+  .filebox pre{margin:0!important;border:0!important;border-radius:0!important;max-height:420px;overflow:auto;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .mutes{color:var(--mute-2);font-size:12.5px;margin-left:10px}
+  .dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .step-body>p:first-of-type{margin-top:0}
+  .src{font-size:13px;color:var(--mute)}
+  .prompt pre.ptext{white-space:pre-wrap;word-break:break-word}
+  table td code,table th code{font-size:12.5px}
+</style>
+<link rel="stylesheet" href="assets/theme/meet3-content.css">
+<meta name="description" content="AIX102 Claude Cowork 핵심 익히기 실습 가이드">
+<link rel="stylesheet" href="assets/site/site.css">
+</head>
+<body class="meeting3-content" data-page="module4">
+<svg style="display:none" aria-hidden="true"><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2.5 20h19L12 3z"/><path d="M12 9v5"/><path d="M12 17.3v.01"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></symbol><symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/><path d="M3 21h18"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5"/><path d="M12 16V8"/><path d="M17 16v-8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="15.5" cy="8.5" r="4.5"/><path d="M12.3 11.7L3 21v-4h4l1-1v-2h2v-2h2"/></symbol><symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="10" rx="1.5"/><path d="M2 19h20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v3"/></symbol><symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol><symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 3c3 2 5 6 5 10l-2 3H9l-2-3c0-4 2-8 5-10z"/><path d="M9 16l-2 4"/><path d="M15 16l2 4"/><path d="M12 10h.01"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 3.5a4 4 0 0 1 0 7.5"/><path d="M22 21a7 7 0 0 0-5-6.7"/></symbol></svg>
+<header class="hero">
+  <div class="kicker"><span class="series">Claude Cowork 핵심 익히기</span> · 모듈 4 · <span class="wbadge">워크샵</span></div>
+  <h1 class="title"><span class="em">나의 Skill</span> 만들기</h1>
+  <p class="subtitle cowork-subtitle">업무 종류와 상관없이, 내가 반복하는 워크플로우 하나를 골라 나만의 스킬로 만듭니다.</p>
+</header>
+<main class="sheet">
+<section class="s ch" id="ch-4-1" data-sublink="4.1 · 반복 워크플로우 고르기"><div class="sec-head"><div class="sec-num">4.1</div><div><h2>반복 워크플로우 고르기</h2><div class="sec-sub">스킬로 만들 반복 업무 하나와, 그 일에 필요한 자료 묶음을 정합니다.</div></div></div>
+<p>이번 실습에서는 내가 자주 반복하는 업무를 하나의 Skill로 만듭니다. 업무 종류는 상관없습니다. 수업 전에 생각해 온 작업이 있다면 그대로 사용하고, 아직 없다면 <b>“내가 반복적으로 수행하고 있고, 가능하면 자동화하고 싶은 작업”</b>을 하나 고릅니다.</p><p>좋은 주제는 한 번 하고 끝나는 작업보다, <b>비슷한 순서로 여러 번 반복되며 몇 개의 단계로 나눌 수 있는 작업</b>입니다.</p><details open><summary>이런 작업이 좋은 주제입니다 (예시 11개)</summary><ul class="myskill-ex"><li>강의 자료나 여러 콘텐츠를 모아 핵심 내용을 요약하고 강의 노트로 정리하기</li><li>매주 특정 분야의 뉴스나 콘텐츠를 찾아 카드뉴스 초안 만들기</li><li>매주 전달받는 리포트에서 필요한 숫자와 내용을 뽑아 정해진 형식으로 주간 보고서 작성하기</li><li>회의가 끝날 때마다 회의록을 읽고 결정사항 / 담당자 / 다음 액션 정리하기</li><li>논문이나 보고서를 읽고 연구 목적 / 방법 / 결과 / 시사점 형식으로 정리하기</li><li>고객 인터뷰 기록을 모아 주요 니즈와 반복되는 문제점 분류하기</li><li>여러 지원자 자료를 동일한 기준으로 읽고 평가표 초안 작성하기</li><li>매번 새로운 프로젝트를 시작할 때 자료를 받아 PRD 또는 프로젝트 브리프 만들기</li><li>특정 웹사이트들을 확인해 정보를 모은 뒤 시장·경쟁사 업데이트 작성하기</li><li>매주 SNS 콘텐츠 후보를 모아 게시물 아이디어 → 초안 → 제목/해시태그까지 생성하기</li><li>행사나 수업이 끝난 뒤 설문 데이터를 받아 주요 결과와 개선사항 정리하기</li></ul></details><h3>이런 워크플로우가 좋습니다</h3><p>가능하면 아래 조건을 만족하는 작업을 골라 봅니다.</p><div class="crit"><div class="crit-i"><span class="cn">①</span><b>반복된다</b><span>매주, 매달 또는 프로젝트마다 비슷하게 수행하는 작업</span></div><div class="crit-i"><span class="cn">②</span><b>순서가 있다</b><span>예: 자료 수집 → 분류 → 요약 → 결과물 작성</span></div><div class="crit-i"><span class="cn">③</span><b>단계별로 나눌 수 있다</b><span>각 단계를 하나의 작은 작업처럼 설명할 수 있는 업무</span></div><div class="crit-i"><span class="cn">④</span><b>입력과 결과물이 비교적 명확하다</b><span>무엇을 받아서(Input) 무엇을 만드는지(Output) 설명할 수 있는 업무</span></div></div><h3>함께 준비할 것: 나의 작업에 필요한 ‘데이터 묶음’</h3><p>Skill은 단순히 프롬프트만 만드는 것이 아니라, 내가 실제로 일할 때 참고하는 <b>자료와 규칙을 함께 제공할수록</b> 훨씬 유용해집니다. 선택한 워크플로우를 수행할 때 평소 사용하는 자료 몇 가지를 함께 준비합니다.</p><ul class="myskill-data"><li>내가 정리해야 하는 원본 데이터 / CSV / Excel</li><li>매주 받는 보고서나 PDF</li><li>내가 자주 참고하는 웹사이트 또는 URL 목록</li><li>과거에 작성했던 좋은 결과물 예시</li><li>회의록을 정리할 때 사용하는 회의록 템플릿</li><li>보고서나 제안서의 작성 양식</li><li>자주 사용하는 분류 기준이나 체크리스트</li><li>콘텐츠 제작에 사용하는 브랜드 가이드 / 문체 예시</li><li>분석할 인터뷰 기록이나 문서 샘플</li></ul><div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg> Input + Output을 함께</div><div class="cb"><p>가능하다면 <b>원본 자료(Input) + 원하는 결과물의 예시(Output)</b>를 같이 준비하면 가장 좋습니다. 실제 고객정보·미공개 수치·인사 자료는 넣지 말고, 공개 자료나 이름·숫자를 바꾼 샘플을 사용합니다.</p></div></div><h3>이것만 정리하면 준비 끝</h3><ol class="qs4"><li><b>내가 자동화하고 싶은 반복 업무는 무엇인가?</b><span>예: 매주 AI 뉴스를 모아서 수업용 카드뉴스 초안을 만든다.</span></li><li><b>지금은 어떤 순서로 이 일을 하고 있는가?</b><span>예: 뉴스 검색 → 기사 선택 → 핵심 내용 요약 → 5장 구성 → 제목 작성</span></li><li><b>이 작업에 필요한 자료는 무엇인가?</b><span>예: 뉴스 사이트 5개, 이전 카드뉴스 3개, 카드뉴스 작성 템플릿</span></li><li><b>최종적으로 어떤 결과물이 나오면 좋은가?</b><span>예: 제목 + 5장의 카드뉴스 구성안 + 각 장의 문구</span></li></ol><p class="pull">완벽하게 자동화할 수 있는 일을 찾을 필요는 없습니다. <b>“이 일을 할 때마다 비슷한 과정을 또 하고 있네?”</b>라고 느끼는 작업 하나면 충분합니다.</p>
+</section>
+
+<section class="s ch" id="ch-4-2" data-sublink="4.2 · 나의 Skill 만들기"><div class="sec-head"><div class="sec-num">4.2</div><div><h2>나의 Skill 만들기</h2><div class="sec-sub">고른 워크플로우를 설계안 → 초안 → 시험 실행 → 수정 → 저장 순서로 스킬로 만듭니다. 업무 종류와 상관없이 같은 순서로 진행합니다.</div></div></div>
+<div class="skname" id="skill-name-box"><div class="skname-h"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> 먼저 · 내 스킬 영문 이름 정하기</div><p>아래에 스킬 이름을 입력하면 이 장의 <b>폴더 이름과 모든 프롬프트</b>가 그 이름으로 바뀝니다. 복사 버튼을 누르면 바뀐 이름 그대로 복사됩니다.</p><label class="skname-row" for="skname"><span class="skname-lb">스킬 이름</span><input id="skname" type="text" value="weekly-ai-cardnews" autocomplete="off" spellcheck="false" aria-describedby="skname-rule"></label><p class="skname-rule" id="skname-rule">영문 소문자 · 숫자 · 하이픈만 씁니다(띄어쓰기는 하이픈으로 바뀝니다). 2~4단어로, 이름만 보고 무슨 일을 하는지 알 수 있게 짓습니다.</p><div class="skn-chips"><span class="skn-chips-lb">예시 (누르면 입력됩니다)</span><button type="button" class="skn-chip" data-v="weekly-ai-cardnews"><code>weekly-ai-cardnews</code><span>매주 AI 뉴스로 카드뉴스 초안</span></button><button type="button" class="skn-chip" data-v="meeting-followup"><code>meeting-followup</code><span>회의록 → 결정사항 · 담당자 · 다음 액션</span></button><button type="button" class="skn-chip" data-v="weekly-report"><code>weekly-report</code><span>받은 리포트로 주간 보고서</span></button><button type="button" class="skn-chip" data-v="paper-summary"><code>paper-summary</code><span>논문 · 보고서 요약 노트</span></button><button type="button" class="skn-chip" data-v="interview-insights"><code>interview-insights</code><span>인터뷰 기록 → 니즈 · 문제 분류</span></button><button type="button" class="skn-chip" data-v="project-brief"><code>project-brief</code><span>새 프로젝트 자료 → 브리프 · PRD</span></button></div></div><div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">새 프로젝트와 자료 폴더 준비</span></span></div><div class="step-body"><p><b>프로젝트 → 새 프로젝트</b>에서 이름을 <code>나의 스킬</code>로 정합니다. 바탕화면 등에 <span class="skn">weekly-ai-cardnews</span> 폴더를 만들고, 그 안에 <code>input</code> 폴더를 하나 만듭니다. 준비한 자료는 <b>나누지 말고 전부 <code>input/</code>에 넣습니다.</b> 그다음 <b>폴더 사용</b>으로 <span class="skn">weekly-ai-cardnews</span> 폴더를 연결합니다.</p><div class="filebox"><div class="fh"><span class="fn"><span class="skn">weekly-ai-cardnews</span>/</span></div><pre><span class="skn">weekly-ai-cardnews</span>/
+  input/    준비한 자료를 모두 넣는 곳 (원본 · 예시 · 양식 · 참고 URL 메모 등)
+  skill/    스킬 초안 (STEP 3에서 Claude가 만듭니다)
+  output/   실행 결과 (STEP 4부터 Claude가 만듭니다)</pre></div><p>자료가 적어도 괜찮습니다. 원본 자료 1~2개와 좋은 결과물 예시 1개만 있어도 시작할 수 있습니다. 자주 보는 웹사이트는 <code>참고사이트.txt</code>에 한 줄에 하나씩 적어 같이 넣습니다. 파일 종류는 Claude가 STEP 2에서 스스로 분류합니다.</p><details><summary>선택 · 자료를 미리 나눠 넣고 싶다면</summary><p>자료가 많거나 역할이 섞여 헷갈린다면 <code>input/</code> 대신 아래처럼 나눠 넣어도 됩니다. 이때는 STEP 2 프롬프트의 [자료 위치]에 폴더별 역할을 함께 적습니다.</p><div class="filebox"><div class="fh"><span class="fn"><span class="skn">weekly-ai-cardnews</span>/</span></div><pre><span class="skn">weekly-ai-cardnews</span>/
+  input/      원본 자료 (CSV · Excel · PDF · 회의록 등)
+  examples/   과거에 만든 좋은 결과물 예시
+  rules/      양식 · 템플릿 · 체크리스트 · 브랜드 가이드 · 문체 예시
+  urls.txt    자주 참고하는 웹사이트 (한 줄에 하나, 필요할 때만)</pre></div></details></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">워크플로우를 설명하고 설계안 받기</span></span></div><div class="step-body"><p><a href="#ch-4-1">4.1</a>에서 정리한 네 가지를 <code>[ ]</code> 자리에 채워 보냅니다. 스킬 이름은 위에서 정한 이름이 자동으로 들어갑니다.</p><div class="prompt"><span class="pl">1 · 워크플로우 설명하고 설계안 받기</span><pre class="ptext">내가 반복하는 업무를 "<span class="skn">weekly-ai-cardnews</span>" 스킬로 만들고 싶어. 아래 내용을 바탕으로 스킬 설계안을 먼저 만들어줘.
+아직 스킬을 만들거나 저장하지 마.
+
+[내 업무]
+1. 자동화하고 싶은 반복 업무: [예: 매주 AI 뉴스를 모아 수업용 카드뉴스 초안 만들기]
+2. 지금 하는 순서: [예: 뉴스 검색 → 기사 선택 → 핵심 요약 → 5장 구성 → 제목 작성]
+3. 필요한 자료: [예: 뉴스 사이트 5개, 이전 카드뉴스 3개, 카드뉴스 작성 템플릿]
+4. 원하는 결과물: [예: 제목 + 5장의 카드뉴스 구성안 + 각 장의 문구]
+
+[자료 위치]
+연결한 폴더의 input/ 안에 있는 파일을 모두 읽어. 자료는 나누지 않고 한곳에 넣었어.
+먼저 파일마다 아래 중 무엇인지 표로 분류해서 보여줘. 애매한 파일은 나에게 물어봐.
+- 원본 자료: 매번 새로 들어오는 재료
+- 좋은 결과물 예시: 이렇게 만들고 싶은 완성본
+- 양식 · 규칙: 템플릿, 체크리스트, 브랜드 가이드, 문체 예시
+- 참고 사이트: 자주 보는 웹사이트 목록
+
+[설계안에 담을 것]
+1. 스킬 이름: <span class="skn">weekly-ai-cardnews</span> (더 나은 이름이 있으면 1개만 제안) + 한 줄 설명
+2. 이 스킬을 언제 쓰는지 (발동 조건)
+3. 입력(Input)과 결과물(Output)의 형식
+4. 단계별 작업 순서와 각 단계에서 지킬 규칙
+5. 스킬에 함께 넣을 파일 (양식 · 예시 · 체크리스트)
+6. 사람이 꼭 확인해야 할 부분
+
+설계안을 보여준 뒤, 빠졌거나 애매한 부분을 3개 이내로 나에게 질문해줘.</pre></div><p><b>확인:</b> ① 자료 분류표가 맞는지 보고 틀린 것은 바로잡습니다. ② 설계안의 단계가 내가 실제로 일하는 순서와 같은지 봅니다. ③ Claude의 질문에 짧게라도 답합니다. 답이 구체적일수록 스킬이 정확해집니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">스킬 초안 만들기 (저장하지 않기)</span></span></div><div class="step-body"><div class="prompt"><span class="pl">2 · 스킬 초안 만들기 (저장하지 않기)</span><pre class="ptext">답변을 반영해서 설계안대로 "<span class="skn">weekly-ai-cardnews</span>" 스킬 초안을 만들어줘.
+아직 내 스킬로 저장하지 마. 연결한 폴더의 skill/ 폴더에 파일로만 만들어.
+
+- SKILL.md의 name은 <span class="skn">weekly-ai-cardnews</span>로 하고, description에는 어떤 요청에서 이 스킬을 쓰는지 구체적으로 적어.
+- 작업 순서 · 결과 형식 · 지킬 규칙을 본문에 단계별로 적어.
+- input/의 양식 · 예시 중 필요한 파일은 skill/ 안에 복사해 넣고, 본문에서 언제 참고하는지 적어.
+- 자료에 없는 내용은 지어내지 말고 "확인 필요"로 표시하게 해.
+
+다 만들면 SKILL.md 전문을 보여줘.</pre></div><p><b>확인:</b> <code>skill/SKILL.md</code>가 생겼는지, <code>name</code> · <code>description</code> · 단계별 순서가 설계안과 같은지 읽어 봅니다.</p><div class="call warn"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> 아직 저장하지 않습니다</div><div class="cb"><p>STEP 3~5는 <b>초안을 만들고 시험하는 단계</b>입니다. 결과를 확인하고 고친 뒤 STEP 6에서 한 번만 저장합니다. 중간에 Claude가 저장할지 물으면 “아직 저장하지 마”라고 답합니다.</p></div></div></div></div><div class="step"><div class="step-head"><span class="sn">STEP 4</span><span><span class="st">초안대로 실행하고 결과 확인하기</span></span></div><div class="step-body"><div class="prompt"><span class="pl">3 · 초안대로 실행하기</span><pre class="ptext">skill/SKILL.md를 처음부터 읽고, 적힌 순서 그대로 따라서 input/ 자료로 실제로 한 번 실행해줘.
+아직 스킬로 저장하지 마.
+
+- 결과물은 output/에 새 파일로 저장해. input/의 원본은 고치지 마.
+- 실행하면서 SKILL.md의 몇 번째 단계를 하고 있는지 단계마다 한 줄로 알려줘.
+- SKILL.md에 적혀 있지 않아서 네가 임의로 판단한 부분이 있으면 따로 모아서 알려줘.
+- 좋은 결과물 예시가 있으면 이번 결과와 비교해서 부족한 점을 표로 정리해줘.</pre></div><p><b>확인:</b> <code>output/</code>의 결과 파일을 <b>직접 열어</b> 아래를 봅니다.</p><table><tr><th style="width:26%">볼 것</th><th>이렇게 되어 있으면 좋습니다</th></tr><tr><td>결과 파일</td><td>output/에 새 파일이 있고, input/의 원본은 그대로다.</td></tr><tr><td>순서</td><td>Claude가 알려 준 진행 단계가 SKILL.md의 순서와 같다.</td></tr><tr><td>형식 · 분량</td><td>내가 원한 결과물 형식과 분량에 맞는다.</td></tr><tr><td>근거</td><td>자료에 없는 내용은 「확인 필요」로 남아 있다.</td></tr><tr><td>임의 판단</td><td>Claude가 따로 알려 준 “임의로 판단한 부분”이 STEP 5에서 규칙으로 적을 후보다.</td></tr></table></div></div><div class="step"><div class="step-head"><span class="sn">STEP 5</span><span><span class="st">결과를 보고 고치기</span></span></div><div class="step-body"><div class="prompt"><span class="pl">4 · 규칙 고치고 다시 실행</span><pre class="ptext">방금 결과에서 아래를 고쳐서 skill/SKILL.md 규칙에 반영하고, 같은 input/ 자료로 다시 실행해줘.
+아직 스킬로 저장하지 마.
+
+- 고칠 점: [예: 요약이 길다. 항목마다 3줄 이내로]
+- 고칠 점: [예: 출처 표기가 빠졌다. 항목 끝에 출처를 붙여]
+
+바뀐 규칙과 이전 결과 · 새 결과의 차이를 표로 보여줘.</pre></div><p>마음에 들 때까지 한두 번 반복합니다. STEP 4에서 Claude가 “임의로 판단한 부분”도 원하는 방식으로 정해 규칙에 넣습니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 6</span><span><span class="st">전역 스킬로 저장</span></span></div><div class="step-body"><div class="prompt"><span class="pl">5 · 나의 스킬 저장</span><pre class="ptext">skill/ 폴더의 스킬을 "<span class="skn">weekly-ai-cardnews</span>" 스킬로 전역에 저장해줘.</pre></div><p><b>확인:</b> <b>사용자 지정 → 스킬 → 내 항목</b>에 <span class="skn">weekly-ai-cardnews</span>가 나타나는지 봅니다. 저장이 제한되면 <code>skill/</code> 폴더를 ZIP으로 묶어 <a href="module2.html#skill-upload">2.2의 업로드 방법</a>으로 올립니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 7</span><span><span class="st">새 대화에서 다시 써 보기</span></span></div><div class="step-body"><p>새 대화를 열고 <code>/</code>를 입력해 내 스킬을 고른 뒤, 새 자료로 실행합니다.</p><div class="prompt"><span class="pl">6 · 나의 스킬로 실행</span><pre class="ptext">/<span class="skn">weekly-ai-cardnews</span> 이번 자료로 실행해줘.
+자료는 input/에 있어. 결과는 output/에 새 파일로 저장해.</pre></div><p><b>확인:</b> 아래 점검표로 스킬을 확인합니다. 빠진 항목이 있으면 STEP 5로 돌아가 고친 뒤 다시 저장합니다.</p><table>
+    <tr><th style="width:24%">점검</th><th>이렇게 되어 있으면 좋습니다</th></tr>
+    <tr><td>이름</td><td>이름만 보고 무슨 일을 하는지 알 수 있다.</td></tr>
+    <tr><td>description</td><td>어떤 요청에서 쓰는지 구체적으로 적혀 있다.</td></tr>
+    <tr><td>입력·결과</td><td>무엇을 받아 무엇을 만드는지 형식이 정해져 있다.</td></tr>
+    <tr><td>순서</td><td>단계가 내가 일하는 순서대로 적혀 있다.</td></tr>
+    <tr><td>근거</td><td>자료에 없는 내용은 「확인 필요」로 남긴다.</td></tr>
+    <tr><td>안전</td><td>원본을 고치지 않고 output/에 새 파일로 저장한다.</td></tr>
+    <tr><td>재사용</td><td>새 대화에서 /이름으로 불러도 같은 품질이 나온다.</td></tr>
+  </table><div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> 더 다듬고 싶다면</div><div class="cb"><p>공개 스킬 <b>skill-creator</b>를 추가하면 스킬의 설명·발동 조건을 다듬고 여러 번 시험해 볼 수 있습니다. <a href="module2.html#skill-catalog">2.2의 대표 스킬 목록</a>에서 찾을 수 있습니다. 매주 같은 때 실행하려면 자습 <a href="selfstudy.html#ch-b9">S1.9 스케줄링</a>으로 이어 갑니다.</p></div></div></div></div>
+</div></div>
+</section>
+</main>
+<script>
+(function(){
+  var inp=document.getElementById('skname'); if(!inp)return;
+  var KEY='cw-skill-name', DEF='weekly-ai-cardnews';
+  function clean(v){ return (v||'').toLowerCase().trim().replace(/[\s_]+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,''); }
+  function apply(v){ var n=clean(v)||DEF; document.querySelectorAll('.skn').forEach(function(s){ s.textContent=n; }); return n; }
+  try{ var saved=localStorage.getItem(KEY); if(saved){ inp.value=saved; } }catch(e){}
+  apply(inp.value);
+  inp.addEventListener('input',function(){ var n=apply(inp.value); try{ localStorage.setItem(KEY,clean(inp.value)); }catch(e){} });
+  inp.addEventListener('blur',function(){ var c=clean(inp.value); inp.value=c||DEF; apply(inp.value); });
+  document.querySelectorAll('.skn-chip').forEach(function(b){ b.addEventListener('click',function(){ inp.value=b.getAttribute('data-v'); apply(inp.value); try{ localStorage.setItem(KEY,inp.value); }catch(e){} inp.focus(); }); });
+})();
+</script>
+<script src="assets/site/site.js"></script>
+<script src="assets/theme/module.js" defer></script>
+</body>
+</html>

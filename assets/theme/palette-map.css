@@ -1,0 +1,165 @@
+/* 자동 생성 — 인라인 CSS의 채도 있는 하드코딩 색을 공용 테마 토큰(그린·무채색)로 사상 */
+.prog{background:#fafafa}
+h4.step{color:#171717}
+.b-time{background:var(--primary-soft)}
+.concept{border-color:#fafafa}
+.warnb{border-color:#fafafa}
+.tipb{border-color:var(--primary-soft)}
+.infob{border-color:#fafafa}
+.greyb{background:#fafafa}
+.prompt .lbl{color:#dfdfdf}
+.copy{background:#1c1c1c;color:#fafafa}
+.copy:hover{background:#171717}
+.fill{color:#dfdfdf}
+.data .fh{background:#fafafa}
+.data .fh .fn{color:#171717}
+.copy2{background:#fafafa;color:#171717}
+.copy2:hover{background:#fafafa}
+.ebadge{background:#fafafa;color:#171717;border:1px solid #dfdfdf}
+.data.edit{border-color:#dfdfdf}
+.data.edit .fh{background:#fafafa;border-bottom-color:#dfdfdf}
+.data.edit pre{background:#fafafa;caret-color:#171717}
+.data.edit pre:focus{box-shadow:inset 0 0 0 2px #dfdfdf}
+.data.edit.dirty .fh{background:#fafafa}
+.reset{background:#fafafa}
+.reset:hover{background:#fafafa}
+.resetall{color:#171717;border:1px solid #dfdfdf}
+.resetall:hover{background:#fafafa}
+.hero{background:linear-gradient(180deg,#fafafa 0%,#ffffff 100%)}
+.lg.dnm{color:#1c1c1c}
+.lg.dnm i{background:linear-gradient(135deg,#171717,var(--primary-deep))}
+.lg.aws{color:#1c1c1c}
+.shot{background:#fafafa}
+.flow .n{border:1px solid #fafafa;color:#171717}
+th{background:#fafafa;border-bottom:2px solid rgba(23,23,23,.28)}
+code.inl{background:#fafafa}
+a{border-bottom:1px solid rgba(23,23,23,.4)}
+.thesis-inner{color:#fafafa}
+.bld.b1 .bn{color:#dfdfdf}
+.bld.b2 .bn{color:#bfe9d6}
+.bld .btt{color:#fafafa}
+.step-head{border-bottom:1px solid #bfe9d6}
+.step-goal b{color:var(--primary-deep)}
+.p1sec a{border-bottom-color:rgba(23,23,23,.4)}
+.prompt{color:#fafafa}
+.rnote{border:1px solid #bfe9d6}
+.rnote b{color:var(--primary-deep)}
+.call.tip{background:#fafafa;border-color:#dfdfdf}
+.call.tip .ct{color:#171717}
+.call.warn{border-color:#dfdfdf;background:var(--callout,#fafafa)}
+.cheat{color:#fafafa}
+.cheat .cpart.c1 .cph{color:#dfdfdf}
+.cheat .cpart.c2 .cph{color:#bfe9d6}
+.cheat code{color:#dfdfdf;background:#1c1c1c}
+.scrim{background:rgba(23,23,23,.4)}
+.thesis-inner::before{color:rgba(223,223,223,.16)}
+.thesis-q{color:#fafafa}
+code.cmd{background:#fafafa;border-color:#dfdfdf}
+pre{color:#fafafa}
+pre .c{color:#dfdfdf}
+.video .thumb .play span{background:rgba(23,23,23,.92)}
+.video .veyebrow{color:#171717}
+.video .veyebrow .yt{background:#171717}
+.cheat th{background:#1c1c1c;color:#fafafa}
+.prevlink-in{border:1px solid #fafafa}
+.call.data{background:#fafafa;border-color:#fafafa}
+.call.solo{border-color:#bfe9d6}
+.mdl.opus{border-color:#dfdfdf}
+.mdl.sonnet{border-color:#bfe9d6}
+.mdl.haiku{border-color:#dfdfdf}
+.eq{background:#1c1c1c;color:#fafafa}
+.part.p1 .part-in{border:1px solid #bfe9d6}
+.part.p2 .part-in{border:1px solid #fafafa}
+.fnode.hot{border-color:#bfe9d6}
+.bacol.b{border-color:#dfdfdf}
+.bacol.a{border-color:#bfe9d6}
+.cheat h3 .p1{color:#bfe9d6}
+.cheat h3 .p2{color:#dfdfdf}
+.meta a{border-bottom-color:rgba(23,23,23,.4)}
+.verify .vh{color:var(--primary-deep)}
+.wk{border:1px solid #dfdfdf}
+.ev.now{border-color:#fafafa}
+.pr{border:1px solid #bfe9d6}
+.fnode.plan{background:var(--c2-bg,#fafafa)}
+.fnode.gen{background:#fafafa}
+.fnode.rev{background:var(--primary-soft)}
+.slice.decide{border:1px solid #fafafa}
+.slice.deliver{border:1px solid #fafafa}
+.video .vgo{color:#171717}
+body{background:var(--paper,#fafafa)}
+.kicker{color:var(--rust,#171717)}
+.bd{background:var(--beige,#fafafa)}
+.bd.req{background:var(--callout,#fafafa)}
+.fnode.cust{color:#171717}
+.call.acc{border-color:#fafafa}
+.tmpl{color:#fafafa}
+.fc.cust{border-color:#dfdfdf}
+.fc.stk{border-color:#fafafa}
+.fc.cust h4{color:#171717}
+.promptbox pre{color:#fafafa}
+.promptbox pre .c{color:#dfdfdf}
+.profile .avatar{background:linear-gradient(135deg,var(--acc),#171717)}
+.chip{color:#171717;border:1px solid #dfdfdf}
+.call{border:1px solid #dfdfdf;background:#fafafa}
+.call .ct{color:#171717}
+.val{border:1px solid #dfdfdf}
+.val .vt{color:#171717}
+.dsys .dtag{color:var(--primary-deep)}
+pre .k{color:#dfdfdf}
+pre .r{color:#dfdfdf}
+.risk{border:1px solid #fafafa}
+.axis.read{border-color:#fafafa}
+.axis.run{border-color:#bfe9d6}
+.seg.s2{background:#fafafa}
+.seg.s3{background:var(--primary-soft)}
+.warnstrip{background:#fafafa;border:1px solid #dfdfdf}
+.partdiv.p1 .partdiv-in{background:linear-gradient(135deg,#171717,#171717)}
+.partdiv.p2 .partdiv-in{background:linear-gradient(135deg,var(--primary-deep),var(--primary-deep))}
+code.fn{border-color:#fafafa}
+code.sf{border-color:#bfe9d6}
+pre .g{color:#dfdfdf}
+.iceberg{background:linear-gradient(180deg,#fafafa 0%,#fafafa 32%,#1c1c1c 32%,#1c1c1c 100%)}
+.ice-bottom .lbl{color:#fafafa}
+.wfstep{border:1px solid #bfe9d6}
+.rc.ai{border-color:#fafafa}
+.rc.hu{border-color:#dfdfdf}
+.rc.hu h4{color:#171717}
+.ta{background:#1c1c1c}
+.svc.legacy{border-color:#dfdfdf}
+.svc.db{border-color:#dfdfdf}
+.skill-head .star{color:#171717;background:#fafafa;border:1px solid #dfdfdf}
+.skill-body .rl.why{background:var(--rev-bg,var(--primary-soft))}
+.cmd2{color:#fafafa}
+.cmd2 .c{color:#dfdfdf}
+.try-note b{color:var(--primary-deep)}
+.axis.mcp{border-color:#fafafa}
+.axis.sub{border-color:#bfe9d6}
+.bn{border:1px solid #bfe9d6}
+.ctxbox.mainc{border-color:#bfe9d6}
+.cl{color:#171717}
+.rf{color:#fafafa}
+.card.hi{box-shadow:0 2px 12px rgba(23,23,23,.12)}
+.layer.context{background:#fafafa}
+.layer.prompt{background:#fafafa}
+.engine{background:#fafafa}
+.feeds{border:1px solid #fafafa}
+.piece.on{background:#fafafa;border-color:#dfdfdf;box-shadow:0 0 0 2px rgba(223,223,223,.35)}
+.call.note{border-color:#dfdfdf}
+.code{color:#fafafa}
+.code .gr{color:#dfdfdf}
+.role.orc .who{color:#171717}
+.role.arc .who{color:#171717}
+.role.rev .who{color:var(--primary-deep)}
+.apgroup.orc .tag{color:#171717}
+.apgroup.arc .tag{color:#171717}
+.apgroup.rev .tag{color:var(--primary-deep)}
+.star{border-color:#bfe9d6}
+.col.ok{border-color:#bfe9d6}
+.col.no{border-color:#dfdfdf}
+.call.note .ct{color:#171717}
+.say{border:1px solid #dfdfdf}
+.say .sl{color:#171717}
+.role.m1 .who{color:var(--primary-deep)}
+.role.m2 .who{color:#171717}
+.role.m3 .who{color:#171717}
+.forbid{border:1px solid #dfdfdf}

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 1 · Cowork 기능 살펴보기 | Claude Cowork 핵심 익히기</title>
+<style>
+  :root{
+    --paper:#FBF9F4; --paper-2:#F3EFE6;
+    --ink:#1B2430; --ink-soft:#48525F; --ink-faint:#8A9099;
+    --line:#E2DBCD; --hl:#FFE45C;
+    --acc:#2E9E6B;           /* 워크샵 = green (실습/직접 하기) */
+    --acc-bg:#E0F0E7;
+    --blue:#3B6EA5; --blue-bg:#E6EEF6; --blue-line:#C4D6E8; --blue-dk:#2C5580;
+    --warn:#C9852B; --warn-bg:#FBEFD8; --gap:#D6503C; --gap-bg:#F8E3DE;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Space Grotesk',-apple-system,sans-serif;
+    --kr:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--kr);font-size:17px;line-height:1.78;-webkit-font-smoothing:antialiased;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 2.1em;background-position:0 -1px;background-attachment:local}
+  .sheet{max-width:var(--maxw);margin:0 auto;padding:0 26px 36px;position:relative}
+  a{color:var(--acc);text-decoration:none;border-bottom:1px solid rgba(46,158,107,.4)}
+  a:hover{border-bottom-color:var(--acc)}
+
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:76px 26px 30px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--acc)}
+  .kicker .series{color:var(--ink-soft)}
+  .kicker .wbadge{font-family:var(--mono);font-size:10.5px;font-weight:700;background:var(--acc);color:#fff;border-radius:20px;padding:2px 9px;letter-spacing:.08em}
+  h1.title{font-family:var(--disp);font-weight:700;font-size:clamp(31px,5.6vw,50px);line-height:1.09;letter-spacing:-.015em;margin:0 0 18px}
+  h1.title .em{position:relative;white-space:nowrap}
+  h1.title .em::after{content:"";position:absolute;left:-3px;right:-3px;bottom:.08em;height:.42em;background:var(--hl);z-index:-1;transform:rotate(-.6deg);border-radius:2px}
+  .subtitle{font-family:var(--kr);font-size:clamp(18px,2.6vw,22px);color:var(--ink-soft);font-weight:500;margin:0 0 30px}
+  .meta{font-family:var(--mono);font-size:13.5px;color:var(--ink-faint);line-height:1.7;padding-top:20px;border-top:1px solid var(--line)}
+  .meta b{color:var(--ink-soft);font-weight:500}
+
+  .thesis{max-width:var(--maxw);margin:34px auto 0;padding:0 26px}
+  .thesis-inner{background:var(--ink);color:#F6F3EC;border-radius:14px;padding:32px 34px 28px;position:relative;overflow:hidden}
+  .thesis-lead{font-size:14px;color:#B9BFC8;font-family:var(--mono);letter-spacing:.04em;margin-bottom:10px}
+  .thesis-main{font-family:var(--disp);font-weight:600;font-size:clamp(19px,3.2vw,25px);line-height:1.32;margin:0}
+  .thesis-main .y{color:var(--hl)}
+  .builds{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .bld{flex:1;min-width:220px;background:#2A3340;border-radius:10px;padding:13px 15px}
+  .bld .bn{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;font-weight:700}
+  .bld.b1 .bn{color:#9CC3E8} .bld.b2 .bn{color:#8FE0BA}
+  .bld .btt{font-family:var(--disp);font-weight:700;font-size:15px;color:#F6F3EC;margin:3px 0 4px}
+  .bld .bd{font-size:12.5px;color:#B9BFC8;line-height:1.5}
+  /* 여백 정리 — 카드 사이가 82px까지 벌어져 있었다 */
+  section{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  main.sheet > section:first-child{padding-top:22px}
+  main.sheet > section > .sec-head{margin-top:30px}
+  .step{margin:16px 0}
+  .sec-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+  .sec-num{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--paper);background:var(--ink);min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px}
+  h2{font-family:var(--disp);font-weight:700;font-size:clamp(24px,4vw,32px);line-height:1.2;letter-spacing:-.01em;margin:0}
+  .sec-sub{color:var(--ink-soft);font-size:15px;margin-top:4px;font-family:var(--mono);letter-spacing:.02em}
+  p{margin:14px 0}
+  .lead{font-size:19px;color:var(--ink)}
+  strong{font-weight:700}
+  .mk{background:linear-gradient(transparent 58%,var(--hl) 58% 92%,transparent 92%);padding:0 2px;font-weight:600}
+  code{font-family:var(--mono);font-size:.85em;background:var(--paper-2);padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+
+
+  /* STEP block */
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;margin:18px 0;overflow:hidden}
+  .step-head{display:flex;gap:14px;align-items:center;padding:15px 20px;background:var(--acc-bg);border-bottom:1px solid #B6DEC8}
+  .step-head .sn{font-family:var(--mono);font-weight:700;font-size:12px;color:#fff;background:var(--acc);min-width:56px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.03em}
+  .step-head .st{font-family:var(--disp);font-weight:700;font-size:17px;color:var(--ink)}
+  .step-head .stag{font-family:var(--mono);font-size:11.5px;color:var(--acc);margin-top:2px;display:block}
+  .step-body{padding:16px 20px 20px}
+  .step-goal{background:var(--acc-bg);border-radius:8px;padding:8px 13px;margin:0 0 14px;font-size:14.5px;color:var(--ink-soft);display:flex;gap:8px;align-items:baseline;line-height:1.5}
+  .step-goal b{color:#1f7a50;font-family:var(--disp);white-space:nowrap}
+  .step-body ol{margin:0;padding-left:22px}
+  .step-body ol li{margin:8px 0;font-size:15.5px}
+  .step-body ul{margin:8px 0;padding-left:20px;font-size:14.5px;color:var(--ink-soft)}
+
+  /* 표 — 레퍼런스 모듈(W2-3)과 동일 스타일. 워크샵 템플릿엔 원래 표가 없었다 */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+  th{background:var(--paper-2);font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+
+
+  /* 팁 줄 — 레퍼런스 모듈과 동일 */
+  .tipline{display:flex;gap:9px;align-items:baseline;margin:9px 0;font-size:15.5px;
+    color:var(--ink-soft);line-height:1.55;padding-left:2px}
+  .tipline .ti{flex-shrink:0;font-size:14px;line-height:1.6}
+  .tipline b,.tipline strong{color:var(--ink)}
+  .tipline b,.tipline strong{color:var(--ink)}
+
+  /* 파트 구분 — 3·4번 모듈과 동일한 미니멀 구분자 */
+  .part{max-width:var(--maxw);margin:38px auto 0;padding:0 26px}
+  .part-inner{display:flex;gap:13px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:9px}
+  .part-n{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--ink);border-radius:7px;padding:4px 11px;flex-shrink:0}
+  .part-t{font-family:var(--disp);font-weight:700;font-size:clamp(18px,3vw,22px);line-height:1.2}
+  .part-d{font-size:15px;color:var(--ink-soft);margin-top:7px;padding:0 26px;max-width:var(--maxw);margin-left:auto;margin-right:auto;line-height:1.55}
+
+  .path{font-family:var(--mono);font-size:13px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;white-space:nowrap}
+
+  /* blue variant for PART 1 */
+  .p1sec .step-head{background:var(--blue-bg);border-bottom-color:var(--blue-line)}
+  .p1sec .step-head .sn{background:var(--blue)}
+  .p1sec .step-head .stag{color:var(--blue)}
+  .p1sec .step-goal{background:var(--blue-bg)} .p1sec .step-goal b{color:var(--blue-dk)}
+  .p1sec .rnote{background:var(--blue-bg);border-color:var(--blue-line)}
+  .p1sec .rnote b{color:var(--blue-dk)}
+  .p1sec a{color:var(--blue);border-bottom-color:rgba(59,110,165,.4)}
+  .p1sec .sec-num{background:var(--blue)}
+
+  /* prompt to copy */
+  .prompt{background:var(--ink);color:#E7E3D9;border-radius:10px;padding:14px 16px;margin:12px 0;font-size:14.5px;line-height:1.6;position:relative;border-left:4px solid var(--hl)}
+  .prompt .pl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--hl);display:block;margin-bottom:6px}
+  .prompt .ptext{font-family:var(--kr)}
+
+  /* result note */
+  .rnote{background:var(--acc-bg);border:1px solid #B6DEC8;border-radius:9px;padding:11px 14px;margin:12px 0 0;font-size:14px;color:var(--ink-soft)}
+  .rnote b{color:#1f7a50}
+
+  .call{border-radius:12px;padding:18px 20px;margin:20px 0;font-size:15px;line-height:1.7;border:1px solid var(--line);background:#fff}
+  .call .ct{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+  .call.tip{background:#FFFDF4;border-color:#F0E4B8} .call.tip .ct{color:#B08900}
+  .call.warn{background:var(--gap-bg);border-color:#EAC3B9} .call.warn .ct{color:var(--gap)}
+  .call.blue{background:var(--blue-bg);border-color:var(--blue-line)} .call.blue .ct{color:var(--blue)}
+  .call p:first-of-type{margin-top:0} .call p:last-child{margin-bottom:0}
+
+  /* concept: 알려주는 → 해주는 */
+  .flip{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+  .flip .card{border-radius:12px;padding:16px 18px;border:1px solid var(--line)}
+  .flip .card.a{background:var(--paper-2)} .flip .card.b{background:var(--blue-bg);border-color:var(--blue-line)}
+  .flip .card .cl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .flip .card.b .cl{color:var(--blue)}
+  .flip .card .cm{font-family:var(--disp);font-weight:700;font-size:16px;margin:4px 0 4px}
+  .flip .card .cd{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .flip .arrow{display:flex;align-items:center;font-size:22px;color:var(--blue)}
+  @media (max-width:600px){.flip{grid-template-columns:1fr}.flip .arrow{justify-content:center;transform:rotate(90deg)}}
+
+  /* prep checklist */
+  .prep{display:flex;flex-direction:column;gap:8px;margin:20px 0}
+  .pchk{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 16px}
+  .pchk .box{width:20px;height:20px;border:2px solid var(--acc);border-radius:5px;flex-shrink:0}
+  .p1sec .pchk .box{border-color:var(--blue)}
+  .pchk .pt{font-weight:600;font-size:15px}
+  .pchk .pd{font-size:13px;color:var(--ink-soft)}
+
+  /* tools row */
+  .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+  .tool{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .tool .te{font-size:19px} .tool .tt{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px} .tool .td{font-size:13px;color:var(--ink-soft)}
+
+  /* 공개 디자인 시스템 카드 — 이름·설명 위, 실제 화면 캡처 아래 */
+  .dsys{background:#fff;border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+  .dsys .dh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:15px 18px 0}
+  .dsys .dn{font-family:var(--disp);font-weight:700;font-size:16px}
+  .dsys .dtag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:#1f7a50;background:var(--acc-bg);border-radius:20px;padding:2px 9px}
+  .dsys .dd{font-size:14.5px;color:var(--ink-soft);line-height:1.6;padding:6px 18px 13px;margin:0}
+  .dsys img{width:100%;display:block;border-top:1px solid var(--line)}
+  .dsys .dcap{font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding:8px 18px 12px}
+
+  /* 4-stage pattern */
+  .pattern{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:22px 0}
+  .pstage{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 12px;text-align:center;position:relative}
+  .pstage .pe{font-size:22px} .pstage .pn{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px}
+  .pstage .pdd{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .pstage:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:15px;z-index:1}
+  @media (max-width:600px){.pattern{grid-template-columns:1fr 1fr}.pstage:not(:last-child)::after{display:none}}
+
+  .pull{border-left:4px solid var(--acc);padding:8px 0 8px 22px;margin:26px 0;font-size:18px;font-style:italic;color:var(--ink);font-family:var(--kr);line-height:1.5}
+  .pull.blue{border-left-color:var(--blue)}
+  .pull .src{display:block;font-style:normal;font-size:13px;color:var(--ink-faint);font-family:var(--mono);margin-top:8px}
+
+  .cheat{background:var(--ink);color:#EDEAE2;border-radius:16px;padding:30px;margin:30px 0}
+  .cheat h2{color:#fff;font-family:var(--disp)}
+  .cheat .csq{font-family:var(--disp);font-size:16px;color:var(--hl);margin:0 0 18px;line-height:1.45}
+  .cheat .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .cheat .cpart .cph{font-family:var(--mono);font-size:11px;letter-spacing:.1em;font-weight:700;margin-bottom:8px}
+  .cheat .cpart.c1 .cph{color:#9CC3E8} .cheat .cpart.c2 .cph{color:#8FE0BA}
+  .cheat ol{padding-left:20px;margin:0} .cheat ol li{margin:6px 0;color:#C4C9D0;font-size:14px} .cheat ol li b{color:#fff}
+  /* 어두운 배경에서 code 의 밝은 배경이 형광펜처럼 보여 글자가 묻힌다 — 배경·테두리를 없앤다 */
+  /* 한 장 요약의 라벨·값 2열 정렬 (다른 모듈과 동일 규칙) */
+  .cheat .row{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:15px;color:#C4C9D0;flex-wrap:wrap;line-height:1.5}
+  .cheat .row:last-child{border:none}
+  .cheat .row b{color:#fff;font-family:var(--disp)}
+  .cheat .k{min-width:150px;font-family:var(--mono);color:var(--hl);font-size:13.5px;flex-shrink:0}
+  .cheat code{background:transparent;border:none;color:#FFE9A8;padding:0;font-size:.92em}
+  @media (max-width:600px){.cheat .cgrid{grid-template-columns:1fr;gap:18px} .cheat .k{min-width:auto}}
+  .todo{background:var(--hl);color:var(--ink);border-radius:12px;padding:18px 22px;margin-top:22px;font-weight:600;font-size:16px}
+  .todo .tt{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block}
+
+  .sources{margin-top:40px;padding-top:24px;border-top:2px solid var(--ink);font-size:14px;color:var(--ink-soft)}
+  .sources h3{font-size:15px;margin:0 0 12px;color:var(--ink)}
+  .sources ul{padding-left:18px;line-height:1.7}
+  footer.foot{max-width:var(--maxw);margin:0 auto;padding:28px 26px;text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:12px}
+  .nav-next{display:inline-flex;gap:10px;align-items:center;margin-top:8px;color:var(--ink-soft)}
+
+  @media (max-width:680px){body{font-size:16px} .tools{grid-template-columns:1fr} .step-head{flex-wrap:wrap}}
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.in{opacity:1;transform:none}
+  }
+
+figure.fig{margin:14px 0} figure.fig img{width:100%;display:block;border:1px solid var(--line);border-radius:12px} figure.fig figcaption{font-size:13px;color:var(--ink-soft);margin-top:6px;text-align:center}
+.tools.c4{grid-template-columns:repeat(4,1fr)} @media (max-width:680px){.tools.c4{grid-template-columns:1fr 1fr}}
+.who{font-size:12px;color:var(--ink-faint);white-space:nowrap}
+</style>
+<link rel="stylesheet" href="assets/theme/minimal.css">
+<style id="w33-extra">
+  .subtitle.cowork-subtitle{max-width:none}
+  .cowork-subtitle-tail{display:inline-block;max-width:100%}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .sec-num{font-size:13px!important;letter-spacing:-.02em}
+  h2 .badge{font-size:12px;vertical-align:middle;margin-left:8px;font-weight:400}
+  .call .cb>*:first-child{margin-top:0}.call .cb>*:last-child{margin-bottom:0}.call .cb p{margin:0 0 8px}.call .cb table{margin:10px 0 0}
+  .shot{margin:16px 0}.shot img{display:block;max-width:100%;border:1px solid var(--hair);border-radius:12px}.shot figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+  details{border:1px solid var(--hair);border-radius:8px;padding:0 16px;margin:14px 0;background:var(--canvas)}
+  details>summary{cursor:pointer;padding:12px 0;font-weight:500;color:var(--ink);list-style:none;display:flex;align-items:center;gap:8px;font-size:14.5px}
+  details>summary::-webkit-details-marker{display:none}
+  details>summary::before{content:"▸";color:var(--mute-2);font-size:12px;transition:transform .15s}
+  details[open]>summary::before{transform:rotate(90deg)}
+  details[open]>summary{border-bottom:1px solid var(--hair-cool);margin-bottom:12px}
+  details>*:last-child{margin-bottom:14px}
+  .filebox{border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:14px 0}
+  .filebox .fh{padding:10px 14px;font-size:13px;color:var(--mute);background:var(--canvas-soft);border-bottom:1px solid var(--hair-cool)}
+  .filebox .fn{font-family:var(--mono);font-size:12.5px}
+  .filebox pre{margin:0!important;border:0!important;border-radius:0!important;max-height:420px;overflow:auto;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .mutes{color:var(--mute-2);font-size:12.5px;margin-left:10px}
+  .dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .step-body>p:first-of-type{margin-top:0}
+  .src{font-size:13px;color:var(--mute)}
+  .prompt pre.ptext{white-space:pre-wrap;word-break:break-word}
+  table td code,table th code{font-size:12.5px}
+</style>
+<link rel="stylesheet" href="assets/theme/meet3-content.css">
+<meta name="description" content="AIX102 Claude Cowork 핵심 익히기 실습 가이드">
+<link rel="stylesheet" href="assets/site/site.css">
+</head>
+<body class="meeting3-content" data-page="module1">
+<svg style="display:none" aria-hidden="true"><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2.5 20h19L12 3z"/><path d="M12 9v5"/><path d="M12 17.3v.01"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></symbol><symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/><path d="M3 21h18"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5"/><path d="M12 16V8"/><path d="M17 16v-8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="15.5" cy="8.5" r="4.5"/><path d="M12.3 11.7L3 21v-4h4l1-1v-2h2v-2h2"/></symbol><symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="10" rx="1.5"/><path d="M2 19h20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v3"/></symbol><symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol><symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 3c3 2 5 6 5 10l-2 3H9l-2-3c0-4 2-8 5-10z"/><path d="M9 16l-2 4"/><path d="M15 16l2 4"/><path d="M12 10h.01"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 3.5a4 4 0 0 1 0 7.5"/><path d="M22 21a7 7 0 0 0-5-6.7"/></symbol></svg>
+<header class="hero">
+  <div class="kicker"><span class="series">Claude Cowork 핵심 익히기</span> · 모듈 1 · <span class="wbadge">워크샵</span></div>
+  <h1 class="title">Cowork <span class="em">기능 살펴보기</span></h1>
+  <p class="subtitle cowork-subtitle">모델·기본 조작, 폴더·파일·승인·프로젝트·사용자 지정을 순서대로 익힙니다.</p>
+</header>
+<main class="sheet">
+
+<section class="s ch" id="ch-1-1" data-sublink="1.1 · Claude Desktop이란 무엇인가"><div class="sec-head"><div class="sec-num">1.1</div><div><h2>Claude Desktop이란 무엇인가</h2><div class="sec-sub">Claude Desktop을 열고 Cowork 탭을 선택합니다. 다음 장에서 모델과 기본 조작을 먼저 맞춥니다.</div></div></div>
+<p><b>Cowork</b>는 연결한 내 작업 폴더를 읽고, 결과를 문서·엑셀·PPT로 만듭니다. 평소 쓰는 자료에 내 역할과 작성 규칙을 더하면, 업무 배경을 매번 길게 설명할 필요가 줄어듭니다.</p><p>웹 채팅에도 파일을 올릴 수 있습니다. Cowork에서는 <b>허용한 폴더의 여러 파일을 함께 다루고 결과를 그 작업 공간에 저장</b>하는 흐름을 익힙니다.</p><figure class="shot"><img src="assets/img/cw_01.png" alt="Cowork 한글 첫 화면. 왼쪽에 새로 생성, 프로젝트, 아티팩트, 예정됨, 사용자 지정 메뉴가 있고 입력창 아래에 프로젝트 또는 폴더 버튼이 있습니다." loading="lazy"><figcaption>Cowork 첫 화면: 왼쪽에서 프로젝트·아티팩트·예정됨·사용자 지정을 열고, 입력창 아래에서 모델과 작업 폴더를 선택합니다.</figcaption></figure><p>이 워크샵에서는 <code>Code</code> 탭을 사용하지 않습니다. 이 가이드는 한글 화면을 기준으로 안내합니다.</p>
+</section>
+
+<section class="s ch" id="ch-1-2" data-sublink="1.2 · 모델과 기본 조작"><div class="sec-head"><div class="sec-num">1.2</div><div><h2>모델과 기본 조작</h2><div class="sec-sub">오늘 실습은 opus-5 모델을 사용합니다.</div></div></div>
+<div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">모델 선택</span></span></div><div class="step-body"><p>입력창 오른쪽 아래의 <b>모델 이름</b>을 눌러 선택 목록을 엽니다.</p><figure class="shot"><img src="assets/img/cw_02.jpg" alt="모델 이름을 눌러 선택 목록을 연 화면입니다." loading="lazy"><figcaption>모델 이름을 눌러 선택 목록을 연 화면입니다.</figcaption></figure></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">슬래시 목록 열기</span></span></div><div class="step-body"><p>입력창에 <code>/</code>를 입력합니다. 지금은 항목을 실행하지 않고 목록만 봅니다.</p><table>
+    <tr><th>항목</th><th>용도</th></tr>
+    <tr><td>파일 추가</td><td>대화에 파일 첨부</td></tr>
+    <tr><td>사용량</td><td>사용량 현황 확인</td></tr>
+    <tr><td><code>/explain-usage</code></td><td>이 대화의 사용량이 어디에 쓰였는지 차트로 설명</td></tr>
+    <tr><td><code>/setup-claude</code></td><td>초기 설정 안내. 이전 이름은 <code>/setup-cowork</code></td></tr>
+  </table><p>내가 추가한 스킬이 있으면 이 목록에 함께 나타납니다. 그래서 사람마다 보이는 항목이 조금씩 다를 수 있습니다.</p><figure class="shot shot-compact"><img src="assets/img/cw_03_slash.png" alt="슬래시 메뉴에 파일 추가, 사용량, explain-usage, setup-claude가 표시된 화면." loading="lazy"><figcaption>입력창에 /를 입력한 화면입니다. 파일 추가·사용량과 /explain-usage, /setup-claude를 선택할 수 있습니다.</figcaption></figure></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">파일·스킬·연결 도구 선택</span></span></div><div class="step-body"><p>입력창 왼쪽의 <code>+</code>를 클릭합니다.</p><table>
+    <tr><th>메뉴</th><th>용도</th></tr>
+    <tr><td>파일 또는 사진 추가</td><td>파일·이미지 첨부</td></tr>
+    <tr><td>스킬</td><td>사용할 스킬 선택·관리</td></tr>
+    <tr><td>커넥터</td><td>이미 연결된 외부 도구 선택</td></tr>
+    <tr><td>플러그인 추가</td><td>플러그인 추가. 조직 설정에 따라 제한</td></tr>
+  </table><figure class="shot"><img src="assets/img/cw_04.png" alt="더하기 메뉴에 파일 또는 사진 추가, 스킬, 커넥터, 플러그인 추가가 표시된 한글 화면." loading="lazy"><figcaption>+ 메뉴: 파일 또는 사진 추가로 자료를 첨부하고, 스킬·커넥터 오른쪽의 화살표로 하위 목록을 엽니다.</figcaption></figure></div></div>
+</section>
+
+<section class="s ch" id="ch-1-3" data-sublink="1.3 · 작업 폴더 연결"><div class="sec-head"><div class="sec-num">1.3</div><div><h2>작업 폴더 연결</h2><div class="sec-sub">sample_data가 들어 있는 작업 폴더를 연결하고, 오늘 쓸 자료의 위치를 확인합니다.</div></div></div>
+<div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">실습 폴더 연결</span></span></div><div class="step-body"><ol>
+    <li>입력창 아래 <b>프로젝트 또는 폴더</b>를 클릭합니다.</li>
+    <li>실습용 작업 폴더를 선택합니다. 목록에 없으면 <b>폴더 추가</b>로 추가합니다.</li>
+    <li>연결한 폴더 안에 <b>sample_data</b>가 있어야 합니다. sample_data 자체가 아니라 그 상위 작업 폴더를 연결합니다.</li>
+  </ol><figure class="shot"><img src="assets/img/cw_05.png" alt="프로젝트 또는 폴더 버튼을 누른 한글 화면. 프로젝트 검색, 기존 폴더 목록과 폴더 추가 항목이 표시됩니다." loading="lazy"><figcaption>프로젝트 또는 폴더를 눌러 연 목록입니다. 사용할 실습 폴더가 없으면 맨 아래 폴더 추가를 선택합니다.</figcaption></figure><p>지정한 폴더를 선택할 수 없으면 작업 폴더 경로와 접근 권한을 확인합니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">오늘 쓸 파일 확인</span></span></div><div class="step-body"><div class="prompt"><span class="pl">실습 자료 확인</span><pre class="ptext">연결한 작업 폴더에서 sample_data 폴더를 찾아줘.
+skills/internal-comms, brand, workshop 하위 폴더에 있는 파일 이름을 아래 표로 정리해줘.
+| 폴더 | 파일 이름 | 이름으로 파악한 용도 |
+
+- 파일 본문은 열지 말고 이름만 확인해.
+- 용도를 알 수 없으면 &quot;확인 필요&quot;로 표시해.
+- 위 폴더 중 없는 것이 있으면 따로 알려줘.
+- 파일을 만들거나 수정하거나 옮기지 마.</pre></div><p><b>확인:</b> skills/internal-comms에는 SKILL.md·LICENSE.txt·examples 문서, brand에는 브랜드 규격·로고·검수 예시, workshop에는 워크샵 본문이 보여야 합니다. 없는 폴더가 있으면 <a href="guide.html#ch-0">자료 다운로드</a>와 압축을 푼 위치를 확인합니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">보낸 지시 수정</span></span></div><div class="step-body"><p>방금 보낸 지시에 마우스를 올리고 <b>편집</b>을 클릭합니다. <code>파일 크기 컬럼도 추가해줘</code>를 넣어 다시 보낸 뒤 표를 비교합니다.</p><figure class="shot"><img src="assets/img/cw_06.png" alt="보낸 지시 아래의 연필 모양 버튼에 편집 안내가 표시된 한글 화면." loading="lazy"><figcaption>보낸 지시 아래의 편집 버튼</figcaption></figure><div class="call warn"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> 연결 범위</div><div class="cb"><p>필요한 실습 폴더만 연결하며 파일은 읽기만 합니다. 실제 문서 이름이 보이면 그 화면을 공유하지 않고 연결한 폴더를 확인합니다. 연결한 폴더의 문서는 모두 읽힐 수 있으므로, 실제 업무 문서가 섞인 폴더는 연결하지 않습니다.</p></div></div></div></div>
+</section>
+
+<section class="s ch" id="ch-1-4" data-sublink="1.4 · 파일 만들기와 아티팩트 활용"><div class="sec-head"><div class="sec-num">1.4</div><div><h2>파일 만들기와 아티팩트 활용</h2><div class="sec-sub">예산 CSV로 수식이 있는 엑셀과, 다시 열어 사용하는 예산 아티팩트를 만듭니다.</div></div></div>
+<div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">엑셀 파일 만들기</span></span></div><div class="step-body"><div class="prompt"><span class="pl">1 · 수식이 살아 있는 엑셀 만들기</span><pre class="ptext">sample_data/finance/budget_variance.csv로 output/part1_예산실적.xlsx를 만들어줘.
+원본 CSV와 기존 출력은 보존하고, 같은 파일명이 있으면 번호를 붙여 새로 저장해.
+
+[시트 구성]
+- 예산실적: A1:E1에 부서 | 예산(백만원) | 실적(백만원) | 차이(백만원) | 달성률
+  2~7행은 원본에 처음 나오는 순서대로 6개 부서를 집계하고, 8행은 &quot;합계&quot;로 만들어.
+- 원본데이터: CSV의 모든 행과 열을 A1부터 복사하고, 예산·실적은 숫자로 저장해.
+
+[수식]
+- 예산실적의 B2:C7은 원본데이터를 참조하는 SUMIF 또는 SUMIFS로 집계해.
+- B8은 =SUM(B2:B7), C8은 =SUM(C2:C7)로 전체 합계를 계산해.
+- D열 차이는 실적-예산, E열 달성률은 실적/예산 수식으로 넣어. 합계 행도 같은 방식으로 계산해.
+- 달성률은 소수 첫째 자리까지 백분율로 표시해. Q2·Q3의 제공된 18행을 합산하되 분기 성장률은 추정하지 마.
+
+완료하면 저장 경로와 수식을 확인할 시트명·셀 주소를 알려줘.</pre></div></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">수식 확인</span></span></div><div class="step-body"><p>생성된 엑셀의 <b>예산실적</b> 시트에서 아래 셀을 선택하고, 수식 입력줄을 확인합니다.</p><table>
+    <tr><th>셀</th><th>확인할 수식</th><th>의미</th></tr>
+    <tr><td>B2 · C2</td><td><code>SUMIF</code> 또는 <code>SUMIFS</code></td><td>마케팅 부서의 예산·실적 집계</td></tr>
+    <tr><td>B8</td><td><code>=SUM(B2:B7)</code></td><td>전체 예산 합계 · 2,205백만원</td></tr>
+    <tr><td>C8</td><td><code>=SUM(C2:C7)</code></td><td>전체 실적 합계 · 2,531백만원</td></tr>
+  </table><p><b>원본데이터</b> 시트의 <b>C2</b>를 300에서 310으로 바꿔 봅니다. 예산실적의 <b>B2는 920 → 930</b>, <b>B8은 2,205 → 2,215</b>로 바뀌는지 봅니다.</p><p><b>확인:</b> 예산실적의 <b>D2는 34백만원</b>, <b>E2는 103.7%</b>가 되어야 합니다. 확인한 뒤 <b>원본데이터 시트의 C2</b>를 300으로 되돌립니다. 예산실적의 집계 수식은 그대로 둡니다.</p><div class="call warn"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> 새 파일로 저장</div><div class="cb"><p><b>덮어쓰기는 되돌릴 수 없습니다.</b> 원본을 보존하고 <code>output/</code>에 다른 이름의 새 파일로 저장합니다.</p></div></div><p>같은 방식으로 Word·PowerPoint·PDF도 만들 수 있습니다. 기존 파일도 Claude에 첨부해 수정할 수 있습니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">아티팩트 만들고 다시 열기</span></span></div><div class="step-body"><p id="artifact-intro"><b>아티팩트</b>는 Claude가 만든 문서·차트·작은 앱을 <b>내 계정에 웹 페이지로 저장해 두고 다시 열어 쓰는 결과물</b>입니다. 이번에는 부서를 고르면 예산·실적이 바뀌는 대화형 화면을 만들고, 왼쪽 <b>Artifacts</b>에서 다시 열어 봅니다.</p><div class="prompt"><span class="pl">2 · 예산 요약을 아티팩트로 만들기</span><pre class="ptext">sample_data/finance/budget_variance.csv로 다시 열어 쓸 수 있는 HTML 아티팩트를 만들어줘.
+
+[화면]
+· 제목은 "부서별 예산·실적". 부서를 고르면 예산·실적·차이·달성률이 바뀌게 해.
+· 제공된 Q2·Q3의 18행을 부서별로 합산하고 단위는 백만원으로 표시해.
+· 밝은 배경과 진한 글씨를 쓰고, CSS에 :root { color-scheme: light }를 넣어.
+· 좁은 화면에서도 읽히도록 한 열로 구성하고, 가로 스크롤이 생기지 않게 해.
+· 데이터·CSS·JavaScript는 HTML 안에 넣어. 외부 요청이나 커넥터는 사용하지 마.
+· 자료에 없는 원인·전망은 추가하지 마.
+
+[1단계: 파일 저장]
+1. 연결한 작업 폴더 최상위의 output/part1_예산요약.html에 새로 저장해.
+   같은 이름이 있으면 번호를 붙여 기존 파일을 보존해.
+2. 저장한 파일을 다시 읽어 내용과 실제 절대 경로를 확인해.
+
+[2단계: 아티팩트 만들기]
+1. 1단계에서 확인한 HTML로 내 계정에 아티팩트를 만들어. 제목은 "부서별 예산·실적".
+2. 공유 범위는 기본값 그대로 두고, 링크 공유나 조직 공유 설정은 바꾸지 마.
+3. 만든 뒤 내 아티팩트 목록을 다시 조회해 방금 만든 항목이 있는지 확인해.
+4. 아티팩트 기능을 쓸 수 없거나 실패하면 다른 방법으로 대체하지 말고 멈춰.
+
+[보고]
+· 파일 저장: HTML 파일의 실제 전체 경로
+· 아티팩트: 제목과 링크, 또는 "만들지 못함"과 그 이유
+실제로 만들고 목록에서 확인하지 않았다면 완료로 쓰지 마.</pre></div><ol>
+    <li>생성된 미리보기에서 부서를 바꾸고 예산·실적이 바뀌는지 봅니다.</li>
+    <li>왼쪽 <b>Artifacts</b>에서 <b>부서별 예산·실적</b>을 다시 엽니다.</li>
+    <li>함께 저장한 <code>part1_예산요약.html</code>도 브라우저로 엽니다.</li>
+  </ol><p><b>확인:</b> 보고 내용과 화면 동작을 각각 봅니다.</p><table>
+    <tr><th>볼 곳</th><th>찾아볼 내용</th></tr>
+    <tr><td>보고</td><td>파일 경로와 아티팩트 결과가 따로 적혀 있어야 합니다. 아티팩트를 만들지 못했다면 「만들지 못함」과 이유가 있어야 합니다.</td></tr>
+    <tr><td>Artifacts</td><td><b>부서별 예산·실적</b> 항목이 있고, 눌러서 화면을 다시 열 수 있어야 합니다.</td></tr>
+    <tr><td>부서 선택</td><td>마케팅의 예산이 <b>920백만원</b>인지 보고, 다른 부서를 선택하면 수치가 바뀌는지 봅니다.</td></tr>
+    <tr><td>로컬 HTML</td><td>안내받은 전체 경로에 파일이 있고, 브라우저에서도 부서 선택이 동작해야 합니다.</td></tr>
+  </table><details><summary>파일과 아티팩트의 차이</summary>
+    <table>
+    <tr><th>구분</th><th>저장 위치</th><th>다시 여는 방법</th></tr>
+    <tr><td>HTML 파일</td><td>연결한 작업 폴더의 <code>output/</code></td><td>내 컴퓨터에서 파일을 브라우저로 엽니다. 폴더를 옮기거나 지우면 함께 사라집니다.</td></tr>
+    <tr><td>아티팩트</td><td>내 Claude 계정</td><td>왼쪽 <b>Artifacts</b>에서 엽니다. 처음에는 나만 볼 수 있고, 공유 범위는 내가 바꿀 때만 넓어집니다.</td></tr>
+    </table>
+    <p>파일을 저장하는 것만으로 아티팩트가 생기지는 않습니다. 그래서 프롬프트에서 <b>1단계 파일 저장</b>과 <b>2단계 아티팩트 만들기</b>를 나누고, 결과도 따로 보고받습니다. 이 예제는 CSV만 사용하므로 별도 커넥터 연결이 필요하지 않습니다.</p>
+  </details><details><summary>진행 중인 작업에 추가 지시하기</summary>
+  <p>파일 생성이 진행되는 동안 수정할 점이 생기면 입력창에 추가 지시를 보냅니다. 이미 완료되었다면 같은 대화에서 수정 요청을 이어가면 됩니다. 비교할 결과는 다른 이름의 새 파일로 받습니다.</p>
+  </details></div></div>
+</section>
+
+<section class="s ch" id="ch-1-5" data-sublink="1.5 · 승인 모드와 문서 수정"><div class="sec-head"><div class="sec-num">1.5</div><div><h2>승인 모드와 문서 수정</h2><div class="sec-sub">승인 모드별 차이와 승인 창에서 확인할 점을 알아봅니다.</div></div></div>
+<p>Cowork는 파일을 만들거나 고치는 등 승인이 필요한 동작을 하기 전에 <b>승인 모드</b>에 따라 다르게 움직입니다. 입력창 아래에서 모드를 고를 수 있습니다.</p><table>
+    <tr><th>모드</th><th>동작</th></tr>
+    <tr><td>수동 승인</td><td>승인이 필요한 동작을 실행하기 전에 확인합니다.</td></tr>
+    <tr><td>자동 승인</td><td>Claude가 실행할 작업을 검사한 뒤 승인합니다. 위험하다고 판단하면 다른 방법을 찾거나 사용자에게 확인합니다.</td></tr>
+    <tr><td>모든 승인 건너뛰기</td><td>일반 작업을 사용자 확인이나 자동 안전성 검사 없이 진행합니다.</td></tr>
+  </table><p class="src">차이는 <b>실행 전에 자동 검사를 거치는가</b>입니다. <a href="https://support.claude.com/en/articles/13345190-get-started-with-cowork" target="_blank" rel="noopener">Claude 공식 도움말</a></p><div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> 승인 창에서 볼 것</div><div class="cb"><p>승인 창이 뜨면 <b>동작·대상 경로·내 요청과의 일치 여부</b>를 확인합니다. 내가 요청한 작업이면 허용하고, 시키지 않은 작업이면 거부합니다.</p></div></div><h3>만든 문서의 일부 수정</h3><p>Claude가 만든 마크다운 문서는 결과물 카드에서 문장을 선택한 뒤, 그 부분만 고쳐 달라고 요청할 수 있습니다. 예를 들어 문장을 선택하고 <code>더 짧게, 존댓말로</code>라고 요청하면 선택한 부분만 바뀝니다. 메뉴가 없으면 같은 대화에서 고칠 문장을 지정해 요청합니다.</p>
+</section>
+
+<section class="s ch" id="ch-1-6" data-sublink="1.6 · 프로젝트와 지침"><div class="sec-head"><div class="sec-num">1.6</div><div><h2>프로젝트와 지침</h2><div class="sec-sub">내 역할과 작성 규칙을 프로젝트에 저장하고, 같은 자료의 답변이 어떻게 달라지는지 봅니다.</div></div></div>
+<p><b>작업 폴더는 업무 자료를, 지침은 내 역할과 일하는 방식을 알려줍니다.</b> 프로젝트에 함께 저장하면 배경과 규칙을 매번 반복하지 않아도 됩니다. 매번 수행할 일은 요청으로 알려줍니다.</p><table>
+    <tr><th>지침</th><th>위치와 적용 범위</th></tr>
+    <tr><td>전역</td><td>설정 → 일반의 Claude 지침 · 채팅과 Cowork 공통</td></tr>
+    <tr><td>폴더</td><td>연결한 폴더 · 해당 폴더 작업. 작업 중 Claude가 갱신할 수 있음</td></tr>
+    <tr><td>프로젝트</td><td>프로젝트의 지침 · 해당 프로젝트</td></tr>
+  </table><div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">지침 없이 질문</span></span></div><div class="step-body"><div class="prompt"><span class="pl">1 · 지침을 심기 전</span><pre class="ptext">sample_data/raw_meeting_notes.txt 와 sample_data/raw_meeting_notes_2.txt 두 파일만 읽고,
+신규 적립 서비스 &quot;데일리세이브&quot;의 현재 상황을 다섯 줄로 정리해줘.
+다른 폴더나 실제 업무 자료는 읽지 마.</pre></div><p>비교할 수 있도록 첫 답변을 남겨 둡니다.</p><div class="resp"><div class="rl">응답 예시 · 지침 없이</div><p>두 메모를 기준으로 하면 9/3 2차 미팅 시점의 상황입니다.</p><ol><li>4분기 런칭이 목표이고, MVP는 자동적립·목표설정·리워드알림 3가지로 확정됐습니다(소셜 기능은 2차로 미룸). 개발은 9월 둘째 주에 착수할 수 있습니다.</li><li>30일 리텐션을 주지표로, 가입자 수를 보조지표로 확정했습니다. 타깃은 20~30대이고, 광고는 유튜브와 인스타그램을 우선합니다.</li><li>초기 프로모션 예산은 3억(미확정)에서 2.5억으로 낮춘 초안이 나왔고, 채널별 예산배분안은 9/10까지 받기로 했습니다.</li><li>규제 검토에서는 큰 이슈가 없었지만, 수익률을 오해하게 할 수 있는 광고 문구는 금지입니다. 상표 "데일리세이브"는 비슷한 상표가 1건 발견돼, 대안 3개를 9/10까지 검토하기로 했습니다.</li><li>데모데이는 9월 셋째 주가 빠듯해 10월 첫째 주로 미루자는 제안이 있었습니다. 최종 날짜는 9/11 미팅에서 정하기로 해서 아직 정해지지 않았습니다.</li></ol></div></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">프로젝트 생성과 지침 저장</span></span></div><div class="step-body"><ol>
+    <li>사이드바의 <b>프로젝트</b>에서 <b>새 프로젝트</b>를 누릅니다.</li>
+    <li><b>무엇을 작업 중이신가요?</b>에 <code>데일리세이브 워크샵 실습</code>을 입력합니다.</li>
+    <li><b>어떤 목표를 달성하려고 하시나요?</b>에 아래 프로젝트 지침을 붙여넣습니다.</li>
+    <li><b>폴더 사용</b>으로 실습 폴더를 연결하고 <b>프로젝트 생성</b>을 누릅니다.</li>
+  </ol><figure class="shot"><img src="assets/img/cw_project_create.png" alt="프로젝트 생성 창에 프로젝트 이름과 지침을 입력한 화면입니다." loading="lazy"><figcaption>프로젝트 생성 창: 이름을 적고, 목표 칸에 지침을 붙여넣은 뒤 폴더를 연결합니다.</figcaption></figure><div class="prompt"><span class="pl">프로젝트 지침</span><pre class="ptext">[내 역할]
+- 나는 가상 서비스 "데일리세이브"의 운영 담당자다.
+- 팀 회의 준비를 위해 결정 사항, 미결 과제, 담당자와 기한을 확인한다.
+
+[출처와 근거]
+- 자료에서 확인한 내용에는 어느 파일의 어느 부분인지 근거를 함께 적는다.
+- 자료에 없는 내용은 쓰지 않는다. 필요하면 맨 아래 "확인 필요" 목록에 남긴다.
+- 확정되지 않은 숫자·일정에는 "(미확정)"을 붙인다.
+
+[문서 형태]
+- 결론을 먼저 쓰고, 배경 설명은 뒤에 둔다.
+- 확정된 것과 논의만 한 것을 절대 같은 목록에 섞지 않는다.
+
+[파일 다루기]
+- 원본 파일은 고치지 않는다. 결과는 항상 output 폴더에 새 파일로 저장한다.
+- 파일을 지우지 않는다. 정리가 필요하면 "삭제 후보" 목록으로만 제안한다.</pre></div></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">같은 질문으로 비교</span></span></div><div class="step-body"><p>프로젝트 안에서 1단계 프롬프트를 그대로 다시 보냅니다.</p><div class="resp"><div class="rl">응답 예시 · 프로젝트 지침 적용 후</div><p><b>데일리세이브 현재 상황 (자료 기준일: 2026-09-03 2차 미팅)</b></p><ol><li><b>[확정] MVP 범위:</b> 자동적립 · 목표설정 · 리워드알림 3가지로 정했고, 소셜기능은 2차로 미뤘습니다. (raw_meeting_notes_2.txt 7행)</li><li><b>[확정] KPI:</b> 30일 리텐션을 주지표로, 가입자수를 보조지표로 정했습니다. 광고 채널은 유튜브와 인스타를 먼저 씁니다. (raw_meeting_notes_2.txt 8·10행)</li><li><b>[미확정] 일정:</b> 런칭 목표는 4분기입니다. 데모데이는 개발 리드(정)가 9월 셋째 주에서 10월 첫째 주로 미루자고 제안했고, 최종일은 다음 미팅에서 정하기로 했습니다(미확정). (raw_meeting_notes.txt 5행 · raw_meeting_notes_2.txt 9·11행)</li><li><b>[미확정] 이름·예산:</b> &quot;데일리세이브&quot;라는 이름과 비슷한 상표가 1건 나와서 최(법무)가 대안 3개를 더 보고 있습니다. 초기 프로모션 예산 초안은 3억에서 2.5억으로 줄었습니다(미확정). (raw_meeting_notes_2.txt 5·6행)</li><li><b>[액션] 담당·기한:</b> 정(개발 일정표)은 9/8, 최(상표 대안 + 광고 문구 가이드라인)와 이팀장(채널별 예산배분안)은 9/10, 김(데모데이 시나리오)은 9/12까지입니다. 다음 미팅은 9/11 오전 10시였습니다. (raw_meeting_notes_2.txt 13~19행)</li></ol><p><b>확인 필요</b></p><ul><li>9/11 미팅 결과가 두 파일에 없어서, 데모데이 최종일과 위 액션들이 끝났는지는 알 수 없습니다. 오늘이 10월 첫째 주라서 데모데이 날짜는 먼저 확인하시는 게 좋겠습니다.</li><li>광고 문구 제한이 있습니다. 수익률을 오해하게 할 수 있는 문구는 쓰면 안 됩니다. (raw_meeting_notes_2.txt 5행) 다만 구체적인 가이드라인은 아직 자료에 없습니다.</li></ul></div><p><b>확인:</b> 두 번째 답변에 운영 담당자가 볼 결정·미결 사항과 근거가 있는지 봅니다. 근거가 없거나 확정되지 않은 내용은 「확인 필요」·「미확정」으로 남겨야 합니다.</p><p>프로젝트는 이 데스크탑에 저장되며 다른 기기로 동기화되지 않습니다. 프로젝트 메모리도 다른 프로젝트와 공유되지 않습니다.</p></div></div>
+</section>
+
+<section class="s ch" id="ch-1-7" data-sublink="1.7 · 내 도구가 있는 곳: 사용자 지정"><div class="sec-head"><div class="sec-num">1.7</div><div><h2>내 도구가 있는 곳: 사용자 지정</h2><div class="sec-sub">사용자 지정에서 사용할 수 있는 스킬과 연결 도구를 확인합니다.</div></div></div>
+<table>
+    <tr><th>항목</th><th>용도</th></tr>
+    <tr><td>스킬</td><td>회의록 규격처럼 반복할 작업 절차와 규칙</td></tr>
+    <tr><td>커넥터</td><td>사내 위키 등 외부 시스템 연결 (MCP). <a href="module5.html#ch-5-1">1.5</a>에서 자세히 다룹니다.</td></tr>
+    <tr><td>플러그인</td><td>스킬·커넥터 등을 묶은 확장 패키지</td></tr>
+  </table><ol class="compact-actions">
+    <li><b>사용자 지정 열기</b>: 사이드바에서 <b>사용자 지정</b>을 클릭하고 스킬·커넥터·플러그인 항목을 확인합니다.<figure class="shot"><img src="assets/img/cw_customize.png" alt="사용자 지정 화면에 스킬·커넥터·플러그인 탭과 추천 스킬 목록이 보입니다." loading="lazy"><figcaption>사용자 지정: 위쪽 탭에서 스킬·커넥터·플러그인을 오가며 확인합니다.</figcaption></figure></li>
+    <li><b>입력창에서 스킬 찾기</b>: 입력창의 <b>+ → 스킬</b>을 엽니다. 등록된 스킬을 확인하고, 추가 방법은 <a href="module2.html#ch-2-2">2.2</a>에서 익힙니다.<figure class="shot"><img src="assets/img/cw_input_skills.png" alt="입력창의 더하기 메뉴에서 스킬을 열어 등록된 스킬 목록을 표시한 화면입니다." loading="lazy"><figcaption>입력창 + → 스킬: 등록된 스킬 목록과 스킬 관리·스킬 둘러보기가 보입니다.</figcaption></figure></li>
+  </ol><details><summary>참고: 스킬 추가 위치</summary>
+Cowork 스킬은 사용자 지정에서 추가합니다. Claude Code의 <code>~/.claude</code> 폴더에 둔 스킬은 여기서 보이지 않습니다. 추가 버튼이 없으면 계정·조직 설정에서 스킬 기능이 켜져 있는지 확인합니다.
+</details>
+</section>
+
+</main>
+<script src="assets/site/site.js"></script>
+<script src="assets/theme/module.js" defer></script>
+</body>
+</html>

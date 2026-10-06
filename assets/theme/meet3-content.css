@@ -1,0 +1,38 @@
+/* Meeting-three source lessons only; also works when opened as local HTML. */
+.meeting3-content main.sheet > section {
+  margin-top: 24px !important;
+  padding-top: 20px !important;
+}
+.meeting3-content main.sheet > section:first-child {
+  margin-top: 0 !important;
+  padding-top: 20px !important;
+}
+.meeting3-content main.sheet > section > .sec-head {
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+}
+.meeting3-content .part { margin-top: 36px !important; }
+.meeting3-content .part-inner { padding-top: 20px !important; }
+.meeting3-content .step {
+  margin-top: 16px !important;
+  padding: 18px 0 8px !important;
+}
+.meeting3-content .step:first-child { margin-top: 0 !important; }
+.meeting3-content .step-head { padding-bottom: 0 !important; }
+.meeting3-content .step-body { padding-top: 8px !important; }
+.meeting3-content .step-body > :first-child { margin-top: 0 !important; }
+.meeting3-content .step-body > :last-child { margin-bottom: 0 !important; }
+.meeting3-content .compact-actions { margin: 12px 0; padding-left: 24px; }
+.meeting3-content .compact-actions li { padding: 3px 0; margin: 3px 0; }
+.meeting3-content .reflection-questions { padding-left: 22px; }
+.meeting3-content .reflection-questions li { margin: 7px 0; }
+.meeting3-content .skill-brief { padding-left: 22px; }
+.meeting3-content .skill-brief li { margin: 8px 0; }
+.meeting3-content .shot-compact { max-width: 480px; }
+.meeting3-content .shot-compact img {
+  width: auto !important;
+  max-width: 100% !important;
+  max-height: 340px;
+  object-fit: contain;
+}
+.meeting3-content .shot-compact .m3-image-button { max-width: 100%; }

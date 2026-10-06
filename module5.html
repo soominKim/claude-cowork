@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 5 · MCP로 외부 도구 연결하기 | Claude Cowork 핵심 익히기</title>
+<style>
+  :root{
+    --paper:#FBF9F4; --paper-2:#F3EFE6;
+    --ink:#1B2430; --ink-soft:#48525F; --ink-faint:#8A9099;
+    --line:#E2DBCD; --hl:#FFE45C;
+    --acc:#2E9E6B;           /* 워크샵 = green (실습/직접 하기) */
+    --acc-bg:#E0F0E7;
+    --blue:#3B6EA5; --blue-bg:#E6EEF6; --blue-line:#C4D6E8; --blue-dk:#2C5580;
+    --warn:#C9852B; --warn-bg:#FBEFD8; --gap:#D6503C; --gap-bg:#F8E3DE;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Space Grotesk',-apple-system,sans-serif;
+    --kr:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--kr);font-size:17px;line-height:1.78;-webkit-font-smoothing:antialiased;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 2.1em;background-position:0 -1px;background-attachment:local}
+  .sheet{max-width:var(--maxw);margin:0 auto;padding:0 26px 36px;position:relative}
+  a{color:var(--acc);text-decoration:none;border-bottom:1px solid rgba(46,158,107,.4)}
+  a:hover{border-bottom-color:var(--acc)}
+
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:76px 26px 30px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--acc)}
+  .kicker .series{color:var(--ink-soft)}
+  .kicker .wbadge{font-family:var(--mono);font-size:10.5px;font-weight:700;background:var(--acc);color:#fff;border-radius:20px;padding:2px 9px;letter-spacing:.08em}
+  h1.title{font-family:var(--disp);font-weight:700;font-size:clamp(31px,5.6vw,50px);line-height:1.09;letter-spacing:-.015em;margin:0 0 18px}
+  h1.title .em{position:relative;white-space:nowrap}
+  h1.title .em::after{content:"";position:absolute;left:-3px;right:-3px;bottom:.08em;height:.42em;background:var(--hl);z-index:-1;transform:rotate(-.6deg);border-radius:2px}
+  .subtitle{font-family:var(--kr);font-size:clamp(18px,2.6vw,22px);color:var(--ink-soft);font-weight:500;margin:0 0 30px}
+  .meta{font-family:var(--mono);font-size:13.5px;color:var(--ink-faint);line-height:1.7;padding-top:20px;border-top:1px solid var(--line)}
+  .meta b{color:var(--ink-soft);font-weight:500}
+
+  .thesis{max-width:var(--maxw);margin:34px auto 0;padding:0 26px}
+  .thesis-inner{background:var(--ink);color:#F6F3EC;border-radius:14px;padding:32px 34px 28px;position:relative;overflow:hidden}
+  .thesis-lead{font-size:14px;color:#B9BFC8;font-family:var(--mono);letter-spacing:.04em;margin-bottom:10px}
+  .thesis-main{font-family:var(--disp);font-weight:600;font-size:clamp(19px,3.2vw,25px);line-height:1.32;margin:0}
+  .thesis-main .y{color:var(--hl)}
+  .builds{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .bld{flex:1;min-width:220px;background:#2A3340;border-radius:10px;padding:13px 15px}
+  .bld .bn{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;font-weight:700}
+  .bld.b1 .bn{color:#9CC3E8} .bld.b2 .bn{color:#8FE0BA}
+  .bld .btt{font-family:var(--disp);font-weight:700;font-size:15px;color:#F6F3EC;margin:3px 0 4px}
+  .bld .bd{font-size:12.5px;color:#B9BFC8;line-height:1.5}
+  /* 여백 정리 — 카드 사이가 82px까지 벌어져 있었다 */
+  section{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  main.sheet > section:first-child{padding-top:22px}
+  main.sheet > section > .sec-head{margin-top:30px}
+  .step{margin:16px 0}
+  .sec-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+  .sec-num{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--paper);background:var(--ink);min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px}
+  h2{font-family:var(--disp);font-weight:700;font-size:clamp(24px,4vw,32px);line-height:1.2;letter-spacing:-.01em;margin:0}
+  .sec-sub{color:var(--ink-soft);font-size:15px;margin-top:4px;font-family:var(--mono);letter-spacing:.02em}
+  p{margin:14px 0}
+  .lead{font-size:19px;color:var(--ink)}
+  strong{font-weight:700}
+  .mk{background:linear-gradient(transparent 58%,var(--hl) 58% 92%,transparent 92%);padding:0 2px;font-weight:600}
+  code{font-family:var(--mono);font-size:.85em;background:var(--paper-2);padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+
+
+  /* STEP block */
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;margin:18px 0;overflow:hidden}
+  .step-head{display:flex;gap:14px;align-items:center;padding:15px 20px;background:var(--acc-bg);border-bottom:1px solid #B6DEC8}
+  .step-head .sn{font-family:var(--mono);font-weight:700;font-size:12px;color:#fff;background:var(--acc);min-width:56px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.03em}
+  .step-head .st{font-family:var(--disp);font-weight:700;font-size:17px;color:var(--ink)}
+  .step-head .stag{font-family:var(--mono);font-size:11.5px;color:var(--acc);margin-top:2px;display:block}
+  .step-body{padding:16px 20px 20px}
+  .step-goal{background:var(--acc-bg);border-radius:8px;padding:8px 13px;margin:0 0 14px;font-size:14.5px;color:var(--ink-soft);display:flex;gap:8px;align-items:baseline;line-height:1.5}
+  .step-goal b{color:#1f7a50;font-family:var(--disp);white-space:nowrap}
+  .step-body ol{margin:0;padding-left:22px}
+  .step-body ol li{margin:8px 0;font-size:15.5px}
+  .step-body ul{margin:8px 0;padding-left:20px;font-size:14.5px;color:var(--ink-soft)}
+
+  /* 표 — 레퍼런스 모듈(W2-3)과 동일 스타일. 워크샵 템플릿엔 원래 표가 없었다 */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+  th{background:var(--paper-2);font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+
+
+  /* 팁 줄 — 레퍼런스 모듈과 동일 */
+  .tipline{display:flex;gap:9px;align-items:baseline;margin:9px 0;font-size:15.5px;
+    color:var(--ink-soft);line-height:1.55;padding-left:2px}
+  .tipline .ti{flex-shrink:0;font-size:14px;line-height:1.6}
+  .tipline b,.tipline strong{color:var(--ink)}
+  .tipline b,.tipline strong{color:var(--ink)}
+
+  /* 파트 구분 — 3·4번 모듈과 동일한 미니멀 구분자 */
+  .part{max-width:var(--maxw);margin:38px auto 0;padding:0 26px}
+  .part-inner{display:flex;gap:13px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:9px}
+  .part-n{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--ink);border-radius:7px;padding:4px 11px;flex-shrink:0}
+  .part-t{font-family:var(--disp);font-weight:700;font-size:clamp(18px,3vw,22px);line-height:1.2}
+  .part-d{font-size:15px;color:var(--ink-soft);margin-top:7px;padding:0 26px;max-width:var(--maxw);margin-left:auto;margin-right:auto;line-height:1.55}
+
+  .path{font-family:var(--mono);font-size:13px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;white-space:nowrap}
+
+  /* blue variant for PART 1 */
+  .p1sec .step-head{background:var(--blue-bg);border-bottom-color:var(--blue-line)}
+  .p1sec .step-head .sn{background:var(--blue)}
+  .p1sec .step-head .stag{color:var(--blue)}
+  .p1sec .step-goal{background:var(--blue-bg)} .p1sec .step-goal b{color:var(--blue-dk)}
+  .p1sec .rnote{background:var(--blue-bg);border-color:var(--blue-line)}
+  .p1sec .rnote b{color:var(--blue-dk)}
+  .p1sec a{color:var(--blue);border-bottom-color:rgba(59,110,165,.4)}
+  .p1sec .sec-num{background:var(--blue)}
+
+  /* prompt to copy */
+  .prompt{background:var(--ink);color:#E7E3D9;border-radius:10px;padding:14px 16px;margin:12px 0;font-size:14.5px;line-height:1.6;position:relative;border-left:4px solid var(--hl)}
+  .prompt .pl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--hl);display:block;margin-bottom:6px}
+  .prompt .ptext{font-family:var(--kr)}
+
+  /* result note */
+  .rnote{background:var(--acc-bg);border:1px solid #B6DEC8;border-radius:9px;padding:11px 14px;margin:12px 0 0;font-size:14px;color:var(--ink-soft)}
+  .rnote b{color:#1f7a50}
+
+  .call{border-radius:12px;padding:18px 20px;margin:20px 0;font-size:15px;line-height:1.7;border:1px solid var(--line);background:#fff}
+  .call .ct{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+  .call.tip{background:#FFFDF4;border-color:#F0E4B8} .call.tip .ct{color:#B08900}
+  .call.warn{background:var(--gap-bg);border-color:#EAC3B9} .call.warn .ct{color:var(--gap)}
+  .call.blue{background:var(--blue-bg);border-color:var(--blue-line)} .call.blue .ct{color:var(--blue)}
+  .call p:first-of-type{margin-top:0} .call p:last-child{margin-bottom:0}
+
+  /* concept: 알려주는 → 해주는 */
+  .flip{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+  .flip .card{border-radius:12px;padding:16px 18px;border:1px solid var(--line)}
+  .flip .card.a{background:var(--paper-2)} .flip .card.b{background:var(--blue-bg);border-color:var(--blue-line)}
+  .flip .card .cl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .flip .card.b .cl{color:var(--blue)}
+  .flip .card .cm{font-family:var(--disp);font-weight:700;font-size:16px;margin:4px 0 4px}
+  .flip .card .cd{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .flip .arrow{display:flex;align-items:center;font-size:22px;color:var(--blue)}
+  @media (max-width:600px){.flip{grid-template-columns:1fr}.flip .arrow{justify-content:center;transform:rotate(90deg)}}
+
+  /* prep checklist */
+  .prep{display:flex;flex-direction:column;gap:8px;margin:20px 0}
+  .pchk{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 16px}
+  .pchk .box{width:20px;height:20px;border:2px solid var(--acc);border-radius:5px;flex-shrink:0}
+  .p1sec .pchk .box{border-color:var(--blue)}
+  .pchk .pt{font-weight:600;font-size:15px}
+  .pchk .pd{font-size:13px;color:var(--ink-soft)}
+
+  /* tools row */
+  .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+  .tool{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .tool .te{font-size:19px} .tool .tt{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px} .tool .td{font-size:13px;color:var(--ink-soft)}
+
+  /* 공개 디자인 시스템 카드 — 이름·설명 위, 실제 화면 캡처 아래 */
+  .dsys{background:#fff;border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+  .dsys .dh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:15px 18px 0}
+  .dsys .dn{font-family:var(--disp);font-weight:700;font-size:16px}
+  .dsys .dtag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:#1f7a50;background:var(--acc-bg);border-radius:20px;padding:2px 9px}
+  .dsys .dd{font-size:14.5px;color:var(--ink-soft);line-height:1.6;padding:6px 18px 13px;margin:0}
+  .dsys img{width:100%;display:block;border-top:1px solid var(--line)}
+  .dsys .dcap{font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding:8px 18px 12px}
+
+  /* 4-stage pattern */
+  .pattern{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:22px 0}
+  .pstage{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 12px;text-align:center;position:relative}
+  .pstage .pe{font-size:22px} .pstage .pn{font-family:var(--disp);font-weight:700;font-size:14px;margin-top:4px}
+  .pstage .pdd{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .pstage:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:15px;z-index:1}
+  @media (max-width:600px){.pattern{grid-template-columns:1fr 1fr}.pstage:not(:last-child)::after{display:none}}
+
+  .pull{border-left:4px solid var(--acc);padding:8px 0 8px 22px;margin:26px 0;font-size:18px;font-style:italic;color:var(--ink);font-family:var(--kr);line-height:1.5}
+  .pull.blue{border-left-color:var(--blue)}
+  .pull .src{display:block;font-style:normal;font-size:13px;color:var(--ink-faint);font-family:var(--mono);margin-top:8px}
+
+  .cheat{background:var(--ink);color:#EDEAE2;border-radius:16px;padding:30px;margin:30px 0}
+  .cheat h2{color:#fff;font-family:var(--disp)}
+  .cheat .csq{font-family:var(--disp);font-size:16px;color:var(--hl);margin:0 0 18px;line-height:1.45}
+  .cheat .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .cheat .cpart .cph{font-family:var(--mono);font-size:11px;letter-spacing:.1em;font-weight:700;margin-bottom:8px}
+  .cheat .cpart.c1 .cph{color:#9CC3E8} .cheat .cpart.c2 .cph{color:#8FE0BA}
+  .cheat ol{padding-left:20px;margin:0} .cheat ol li{margin:6px 0;color:#C4C9D0;font-size:14px} .cheat ol li b{color:#fff}
+  /* 어두운 배경에서 code 의 밝은 배경이 형광펜처럼 보여 글자가 묻힌다 — 배경·테두리를 없앤다 */
+  /* 한 장 요약의 라벨·값 2열 정렬 (다른 모듈과 동일 규칙) */
+  .cheat .row{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:15px;color:#C4C9D0;flex-wrap:wrap;line-height:1.5}
+  .cheat .row:last-child{border:none}
+  .cheat .row b{color:#fff;font-family:var(--disp)}
+  .cheat .k{min-width:150px;font-family:var(--mono);color:var(--hl);font-size:13.5px;flex-shrink:0}
+  .cheat code{background:transparent;border:none;color:#FFE9A8;padding:0;font-size:.92em}
+  @media (max-width:600px){.cheat .cgrid{grid-template-columns:1fr;gap:18px} .cheat .k{min-width:auto}}
+  .todo{background:var(--hl);color:var(--ink);border-radius:12px;padding:18px 22px;margin-top:22px;font-weight:600;font-size:16px}
+  .todo .tt{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block}
+
+  .sources{margin-top:40px;padding-top:24px;border-top:2px solid var(--ink);font-size:14px;color:var(--ink-soft)}
+  .sources h3{font-size:15px;margin:0 0 12px;color:var(--ink)}
+  .sources ul{padding-left:18px;line-height:1.7}
+  footer.foot{max-width:var(--maxw);margin:0 auto;padding:28px 26px;text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:12px}
+  .nav-next{display:inline-flex;gap:10px;align-items:center;margin-top:8px;color:var(--ink-soft)}
+
+  @media (max-width:680px){body{font-size:16px} .tools{grid-template-columns:1fr} .step-head{flex-wrap:wrap}}
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.in{opacity:1;transform:none}
+  }
+
+figure.fig{margin:14px 0} figure.fig img{width:100%;display:block;border:1px solid var(--line);border-radius:12px} figure.fig figcaption{font-size:13px;color:var(--ink-soft);margin-top:6px;text-align:center}
+.tools.c4{grid-template-columns:repeat(4,1fr)} @media (max-width:680px){.tools.c4{grid-template-columns:1fr 1fr}}
+.who{font-size:12px;color:var(--ink-faint);white-space:nowrap}
+</style>
+<link rel="stylesheet" href="assets/theme/minimal.css">
+<style id="w33-extra">
+  .subtitle.cowork-subtitle{max-width:none}
+  .cowork-subtitle-tail{display:inline-block;max-width:100%}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .sec-num{font-size:13px!important;letter-spacing:-.02em}
+  h2 .badge{font-size:12px;vertical-align:middle;margin-left:8px;font-weight:400}
+  .call .cb>*:first-child{margin-top:0}.call .cb>*:last-child{margin-bottom:0}.call .cb p{margin:0 0 8px}.call .cb table{margin:10px 0 0}
+  .shot{margin:16px 0}.shot img{display:block;max-width:100%;border:1px solid var(--hair);border-radius:12px}.shot figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+  details{border:1px solid var(--hair);border-radius:8px;padding:0 16px;margin:14px 0;background:var(--canvas)}
+  details>summary{cursor:pointer;padding:12px 0;font-weight:500;color:var(--ink);list-style:none;display:flex;align-items:center;gap:8px;font-size:14.5px}
+  details>summary::-webkit-details-marker{display:none}
+  details>summary::before{content:"▸";color:var(--mute-2);font-size:12px;transition:transform .15s}
+  details[open]>summary::before{transform:rotate(90deg)}
+  details[open]>summary{border-bottom:1px solid var(--hair-cool);margin-bottom:12px}
+  details>*:last-child{margin-bottom:14px}
+  .filebox{border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:14px 0}
+  .filebox .fh{padding:10px 14px;font-size:13px;color:var(--mute);background:var(--canvas-soft);border-bottom:1px solid var(--hair-cool)}
+  .filebox .fn{font-family:var(--mono);font-size:12.5px}
+  .filebox pre{margin:0!important;border:0!important;border-radius:0!important;max-height:420px;overflow:auto;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .mutes{color:var(--mute-2);font-size:12.5px;margin-left:10px}
+  .dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .step-body>p:first-of-type{margin-top:0}
+  .src{font-size:13px;color:var(--mute)}
+  .prompt pre.ptext{white-space:pre-wrap;word-break:break-word}
+  table td code,table th code{font-size:12.5px}
+</style>
+<link rel="stylesheet" href="assets/theme/meet3-content.css">
+<meta name="description" content="AIX102 Claude Cowork 핵심 익히기 실습 가이드">
+<link rel="stylesheet" href="assets/site/site.css">
+</head>
+<body class="meeting3-content" data-page="module5">
+<svg style="display:none" aria-hidden="true"><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2.5 20h19L12 3z"/><path d="M12 9v5"/><path d="M12 17.3v.01"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></symbol><symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/><path d="M3 21h18"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5"/><path d="M12 16V8"/><path d="M17 16v-8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="15.5" cy="8.5" r="4.5"/><path d="M12.3 11.7L3 21v-4h4l1-1v-2h2v-2h2"/></symbol><symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="10" rx="1.5"/><path d="M2 19h20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v3"/></symbol><symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol><symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 3c3 2 5 6 5 10l-2 3H9l-2-3c0-4 2-8 5-10z"/><path d="M9 16l-2 4"/><path d="M15 16l2 4"/><path d="M12 10h.01"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 3.5a4 4 0 0 1 0 7.5"/><path d="M22 21a7 7 0 0 0-5-6.7"/></symbol></svg>
+<header class="hero">
+  <div class="kicker"><span class="series">Claude Cowork 핵심 익히기</span> · 모듈 5 · <span class="wbadge">워크샵</span></div>
+  <h1 class="title">MCP로 <span class="em">외부 도구 연결하기</span></h1>
+  <p class="subtitle cowork-subtitle">MCP의 개념과 스킬과의 차이를 익히고, Higgsfield 사례로 대화 안에서 외부 도구를 쓰는 흐름을 봅니다.</p>
+</header>
+<main class="sheet">
+<section class="s ch" id="ch-5-1" data-sublink="5.1 · MCP란 무엇인가"><div class="sec-head"><div class="sec-num">5.1</div><div><h2>MCP란 무엇인가</h2><div class="sec-sub">Claude가 바깥의 앱·데이터·도구와 연결되는 표준 통로를 이해합니다.</div></div></div>
+<p><b>MCP(Model Context Protocol)</b>는 AI가 외부 서비스와 데이터를 주고받기 위한 <b>공개 표준 연결 방식</b>입니다. Anthropic이 2024년 말에 공개했고, 지금은 여러 AI 도구가 함께 씁니다. 흔히 <b>“AI용 USB-C”</b>에 비유합니다. 기기마다 다른 케이블 대신 USB-C 하나로 연결하듯, 서비스마다 따로 만들던 연결을 MCP 하나로 맞춥니다.</p><figure class="shot"><img src="assets/img/mcp_architecture.jpg" alt="MCP 구조도: Claude 같은 MCP 호스트가 MCP 클라이언트를 거쳐 USB-C 허브처럼 여러 MCP 서버에 연결되고, 각 서버는 Slack·Gmail·Google Calendar 같은 원격 서비스나 내 컴퓨터의 로컬 데이터에 이어집니다." loading="lazy"><figcaption>MCP 구조: 호스트(Claude 등) 안의 MCP 클라이언트가 USB-C 허브처럼 여러 MCP 서버에 연결되고, 서버는 원격 서비스나 내 컴퓨터의 로컬 데이터로 이어집니다.</figcaption></figure><div class="mcp-flow"><div class="mf-box"><b>나</b><span>요청</span></div><span class="mf-ar">→</span><div class="mf-box"><b>Claude</b><span>Cowork · 채팅</span></div><span class="mf-ar">⇄</span><div class="mf-box on"><b>MCP 서버</b><span>= 커넥터</span></div><span class="mf-ar">⇄</span><div class="mf-box"><b>외부 서비스</b><span>Gmail · Notion · Figma · Higgsfield …</span></div></div><p>Cowork에서는 MCP 서버를 <b>커넥터</b>라고 부릅니다. 커넥터를 연결하면 Claude가 그 서비스의 <b>도구(tool)</b>를 직접 호출합니다. 예를 들어 메일을 검색하고, 문서를 만들고, 이미지를 생성합니다.</p><table>
+    <tr><th style="width:24%">구성</th><th>설명</th><th style="width:30%">이 화면에서</th></tr>
+    <tr><td>MCP 호스트</td><td>MCP 서버에 연결해 도구를 쓰는 AI 앱</td><td>Claude 데스크톱 · Cowork</td></tr>
+    <tr><td>MCP 클라이언트</td><td>호스트 안에서 서버 하나와 연결을 맺고 주고받는 부분. 허브의 포트에 해당합니다.</td><td>앱이 알아서 처리 (설정 없음)</td></tr>
+    <tr><td>MCP 서버</td><td>서비스가 제공하는 연결 창구. Gmail·Slack 같은 원격 서비스나 내 컴퓨터의 로컬 데이터에 이어지고, 어떤 도구를 쓸 수 있는지 알려 줍니다.</td><td>사용자 지정 → 커넥터</td></tr>
+    <tr><td>도구 (tool)</td><td>서버가 제공하는 개별 동작. 검색·읽기·쓰기·생성 등</td><td>대화 중 “도구 사용” 표시</td></tr>
+  </table><p>커넥터는 <b>사용자 지정 → 커넥터</b>에서 추가하고 관리합니다. 목록에 있는 공식 커넥터를 고르거나, 서비스가 알려 주는 MCP 서버 주소로 <b>사용자 지정 커넥터</b>를 추가합니다. 입력창의 <b>+ → 커넥터</b>에서 대화마다 켜고 끌 수 있습니다.</p><div class="call warn"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> 연결 전에 확인할 것</div><div class="cb"><p>MCP 서버는 내 계정 권한으로 외부 서비스에서 실제 동작을 합니다. <b>믿을 수 있는 회사가 만든 서버만</b> 연결하고, 연결할 때 요청하는 권한을 읽어 봅니다. 회사 계정·실제 업무 데이터 연결은 사내 정책을 먼저 확인합니다.</p></div></div>
+</section>
+
+<section class="s ch" id="ch-5-2" data-sublink="5.2 · Skill과 MCP의 차이"><div class="sec-head"><div class="sec-num">5.2</div><div><h2>Skill과 MCP의 차이</h2><div class="sec-sub">스킬은 “일하는 방법”, MCP는 “손이 닿는 도구”입니다. 둘을 함께 쓸 때 가장 강력합니다.</div></div></div>
+<p>Anthropic은 둘의 차이를 이렇게 설명합니다. <b>MCP는 매장의 진열대에 들어갈 수 있게 해 주는 것</b>이고, <b>스킬은 그 매장 직원의 전문 지식</b>입니다. 진열대에 들어갈 수 있어도 무엇을 어떤 순서로 골라야 하는지 모르면 결과가 들쭉날쭉합니다.</p><table>
+    <tr><th style="width:20%">구분</th><th>Skill</th><th>MCP (커넥터)</th></tr>
+    <tr><td>한마디로</td><td>일하는 <b>방법</b>을 알려 준다</td><td>일할 <b>도구와 데이터</b>에 연결해 준다</td></tr>
+    <tr><td>담는 것</td><td>작업 순서·결과 형식·규칙·예시 (SKILL.md와 참고 파일)</td><td>외부 서비스의 기능 (검색·읽기·쓰기·생성)</td></tr>
+    <tr><td>있는 곳</td><td>내 계정에 저장된 지침 파일</td><td>외부 회사가 운영하는 서버</td></tr>
+    <tr><td>만드는 사람</td><td>나 · 우리 팀 (1.2 · 1.4에서 직접 만듦)</td><td>주로 서비스 제공 회사</td></tr>
+    <tr><td>없으면?</td><td>할 수는 있지만 매번 설명해야 하고 결과가 달라진다</td><td>그 서비스에 접근 자체를 할 수 없다</td></tr>
+    <tr><td>예</td><td><code>team-share</code> · <code>daily-save-brand-guide</code></td><td>Gmail · Google Drive · Notion · Figma · Higgsfield</td></tr>
+  </table><h3>함께 쓰면</h3><p>MCP가 <b>연결</b>을 맡고, 스킬이 <b>순서와 기준</b>을 맡습니다. 예를 들어 브랜드 규격 스킬이 “어떤 색·문구·로고 규칙을 지킬지”를 정하고, 이미지 생성 MCP가 “실제로 이미지를 만드는 일”을 합니다.</p><div class="mcp-combo"><div><span class="lb">Skill</span><b>daily-save-brand-guide</b><p>색·톤·로고 규칙, 금지 표현, 결과 형식</p></div><span class="mf-ar">+</span><div><span class="lb">MCP</span><b>Higgsfield</b><p>이미지·영상 생성 모델 호출</p></div><span class="mf-ar">=</span><div class="on"><span class="lb">결과</span><b>브랜드에 맞는 광고 시안</b><p>매번 같은 기준으로 반복 생산</p></div></div><p>플러그인은 이 둘을 묶은 꾸러미입니다. 스킬·커넥터·명령을 한 번에 설치할 수 있습니다 (<a href="module1.html#ch-1-7">1.7</a>).</p>
+</section>
+
+<section class="s ch" id="ch-5-3" data-sublink="5.3 · 사례: Higgsfield MCP"><div class="sec-head"><div class="sec-num">5.3</div><div><h2>사례: Higgsfield MCP로 이미지 만들기</h2><div class="sec-sub">이미지·영상 생성 서비스 Higgsfield를 커넥터로 연결해, 대화 안에서 바로 시각 자료를 만듭니다.</div></div></div>
+<p><b>Higgsfield</b>는 여러 이미지·영상 생성 모델을 한곳에서 쓰는 크리에이티브 서비스입니다. 2026년 4월 Claude용 MCP 커넥터를 공개해, Claude에서 리서치·프롬프트 다듬기·광고 이미지와 영상 제작까지 한 대화에서 할 수 있게 되었습니다. Claude가 직접 그림을 그리는 것이 아니라, <b>Higgsfield의 생성 모델을 도구로 호출</b>하는 구조입니다.</p><div class="call tip"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> 선택 실습</div><div class="cb"><p>Higgsfield 계정이 필요하고, 생성할 때 <b>크레딧이 차감</b>됩니다(처음에는 무료 생성분 제공, 이후 유료). 무료 플랜은 쓸 수 있는 모델이 제한되므로 Claude에게 내 플랜에서 쓸 수 있는 모델을 고르게 합니다. 계정이 없으면 화면을 보며 흐름만 따라옵니다. 지원 모델과 요금은 자주 바뀌니 <a href="https://higgsfield.ai/claude-ai-image-generator" target="_blank" rel="noopener">Higgsfield 안내</a>에서 확인합니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 1</span><span><span class="st">Higgsfield 커넥터 연결</span></span></div><div class="step-body"><ol>
+    <li>사이드바에서 <b>사용자 지정</b>을 열고 위쪽 <b>커넥터</b> 탭을 선택합니다.</li>
+    <li><b>탐색</b>에서 <code>Higgsfield</code>를 검색해 선택하고 <b>연결</b>을 누릅니다.</li>
+    <li>Higgsfield 계정으로 로그인하고 요청하는 권한을 확인한 뒤 허용합니다.</li>
+  </ol><p><b>확인:</b> <b>사용자 지정 → 커넥터 → 내 항목</b>에 Higgsfield가 연결됨으로 보이고, 입력창의 <b>+ → 커넥터</b>에서 켜져 있어야 합니다.</p><details><summary>목록에서 찾을 수 없을 때</summary><p><b>커넥터 → + 추가 → 사용자 지정 커넥터 추가</b>에서 이름은 <code>Higgsfield</code>, URL은 <code>https://mcp.higgsfield.ai/mcp</code>로 넣고 연결합니다.</p></details></div></div><div class="step"><div class="step-head"><span class="sn">STEP 2</span><span><span class="st">대화에서 이미지 만들기</span></span></div><div class="step-body"><div class="prompt"><span class="pl">1 · 브랜드 키비주얼 만들기</span><pre class="ptext">Higgsfield 커넥터로 가상 적립 앱 "데일리세이브"의 인스타그램 광고 키비주얼을 만들어줘.
+
+[아트 디렉션]
+- 장면: 코발트 블루(#1D4ED8)에서 밝은 일렉트릭 블루로 이어지는 그라디언트 공간에
+  최신 스마트폰이 살짝 기울어져 떠 있고, 유리 질감의 블루 코인과 화이트 코인이
+  계단처럼 위로 쌓여 올라가는 모습
+- 스타일: 하이엔드 3D 렌더, 스튜디오 조명, 림 라이트, 부드러운 반사와 빛 번짐,
+  얕은 심도, 글로벌 브랜드 광고 캠페인 수준의 디테일
+- 분위기: 신뢰감 있고 산뜻한 느낌, 매일 조금씩 쌓이는 성취감
+- 구도: 1:1, 왼쪽 위 1/3은 로고와 카피가 들어갈 여백으로 비워둬.
+- 이미지 안에 글자·숫자·로고·실존 인물은 넣지 마.
+
+[진행]
+1. 위 내용을 Higgsfield용 영문 프롬프트로 다듬어 먼저 보여줘.
+2. 내 플랜에서 쓸 수 있는 모델 중 이 장면에 가장 잘 맞는 모델을 추천하고, 예상 크레딧을 알려줘.
+3. 내가 확인하면 2장을 생성하고, 더 좋은 쪽과 그 이유를 한 줄로 알려줘.</pre></div><p><b>확인:</b> 생성 전에 영문 프롬프트·모델·크레딧을 먼저 보여 주는지, 결과가 브랜드 블루 톤이고 글자·로고 없이 여백이 남아 있는지 봅니다. 대화 중 Higgsfield 도구를 사용했다는 표시가 나타납니다.</p><p>결과가 밋밋하면 프롬프트를 짧게 줄이기보다 <b>장면·재질·조명·카메라·분위기</b>를 더 구체적으로 적는 편이 효과적입니다.</p></div></div><div class="step"><div class="step-head"><span class="sn">STEP 3</span><span><span class="st">스킬과 함께 쓰기</span></span></div><div class="step-body"><p><a href="module2.html#ch-2-4">2.4</a>에서 만든 <code>daily-save-brand-guide</code> 스킬로 기준을 정하고, Higgsfield로 만듭니다. 5.2의 “스킬 + MCP”를 직접 확인하는 단계입니다.</p><div class="prompt"><span class="pl">2 · 브랜드 스킬 + Higgsfield 캠페인 세트</span><pre class="ptext">/daily-save-brand-guide 데일리세이브 신규 캠페인 "매일 조금씩, 확실하게"의 광고 비주얼 세트를 만들어줘.
+
+[1단계: 아트 디렉션]
+브랜드 규격을 먼저 읽고, 아래 3컷의 장면·카메라·조명·색·여백 위치를 표로 정리한 뒤
+컷마다 Higgsfield용 영문 프롬프트를 써줘.
+1. 키비주얼(1:1): STEP 2에서 고른 이미지의 톤을 이어가는 프리미엄 3D 장면
+2. 라이프스타일(4:5): 해 뜨는 출근길 지하철 창가에서 휴대폰 알림을 보고 미소 짓는 20대 직장인,
+   에디토리얼 사진, 85mm 렌즈, 얕은 심도, 코발트 블루 조명과 따뜻한 햇빛이 섞인 색감
+3. 스토리(9:16): 매일 한 칸씩 불이 켜지는 달력 타일 위로 블루 코인이 계단처럼 올라가는 미니멀 3D
+공통: 메인 컬러 #1D4ED8 계열로 세 컷의 색감을 통일하고, 이미지 안에 글자·숫자·로고는 넣지 마.
+로고와 카피가 들어갈 자리는 여백으로 비워둬.
+
+[2단계: 생성]
+Higgsfield 커넥터로 3컷을 생성해. 생성 전에 사용할 모델과 총 예상 크레딧을 알려주고, 내가 확인하면 진행해.
+색이 브랜드와 다르거나 흐린 컷이 있으면 프롬프트를 고쳐 그 컷만 한 번 다시 생성해.
+
+[3단계: 캠페인 보드]
+생성한 이미지에 ready 폴더의 CI를 규격대로 얹고(어두운 배경은 흰색 로고),
+컷마다 헤드라인 한 줄과 CTA 버튼을 넣은 광고 시안을 만들어.
+세 시안을 한 화면에 모은 캠페인 보드를 output/higgsfield/캠페인보드.html 로 저장해.
+카피는 수익률을 약속하거나 과장하지 말고, 브랜드 규격과 다른 점은 마지막에 「확인 필요」로 적어줘.</pre></div><p><b>확인:</b> 세 컷의 색감과 톤이 하나의 캠페인처럼 이어지는지, CI가 배경에 맞는 색으로 규격대로 얹혔는지, 카피가 과장 없이 들어갔는지 캠페인 보드에서 봅니다. 이 흐름이 마음에 들면 <a href="module4.html#ch-4-2">4.2</a>의 방법으로 “광고 시안 만들기” 스킬로 저장할 수 있습니다.</p></div></div><div class="call warn"><div class="ct"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> 생성물 사용 전에</div><div class="cb"><p>생성 이미지를 실제 광고·외부 게시물에 쓰기 전에 요금제의 상업적 이용 조건, 초상권·저작권, 사내 브랜드 검수를 확인합니다. 다 쓴 커넥터는 <b>사용자 지정 → 커넥터</b>에서 연결을 끊을 수 있습니다.</p></div></div><p class="src">출처: <a href="https://claude.com/blog/extending-claude-capabilities-with-skills-mcp-servers" target="_blank" rel="noopener">Anthropic · Skills와 MCP</a> · <a href="https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp" target="_blank" rel="noopener">Claude 도움말 · 사용자 지정 커넥터</a> · <a href="https://higgsfield.ai/claude-ai-image-generator" target="_blank" rel="noopener">Higgsfield · Claude 연결 안내</a></p>
+</section>
+</main>
+<script src="assets/site/site.js"></script>
+<script src="assets/theme/module.js" defer></script>
+</body>
+</html>
